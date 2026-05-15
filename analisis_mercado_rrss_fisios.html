@@ -1,0 +1,338 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); }
+  .wrap { padding: 1.5rem 0; max-width: 680px; }
+  .header { margin-bottom: 2rem; }
+  .header h1 { font-size: 20px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+  .header p { font-size: 14px; color: var(--color-text-secondary); line-height: 1.6; }
+  .section-title { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .section-title::after { content: ''; flex: 1; height: 0.5px; background: var(--color-border-tertiary); }
+  .tab-row { display: flex; gap: 6px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .tab { padding: 6px 14px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); font-size: 13px; cursor: pointer; background: var(--color-background-primary); color: var(--color-text-secondary); transition: all 0.15s; }
+  .tab.active { background: #1D9E75; border-color: #1D9E75; color: #fff; font-weight: 500; }
+  .tab:hover:not(.active) { background: var(--color-background-secondary); }
+  .cuenta-panel { display: none; }
+  .cuenta-panel.active { display: block; }
+  .field-group { margin-bottom: 1.25rem; }
+  .field-label { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 6px; display: block; font-weight: 500; }
+  .field-hint { font-size: 12px; color: var(--color-text-tertiary); margin-bottom: 6px; }
+  input[type="text"], input[type="url"], textarea {
+    width: 100%; font-size: 14px; color: var(--color-text-primary);
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 8px 12px;
+    font-family: var(--font-sans);
+    resize: vertical;
+    transition: border-color 0.15s;
+  }
+  input[type="text"]:focus, input[type="url"]:focus, textarea:focus {
+    outline: none; border-color: #1D9E75;
+  }
+  textarea { min-height: 72px; }
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .pub-entry { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px; margin-bottom: 10px; border: 0.5px solid var(--color-border-tertiary); }
+  .pub-entry .field-label { font-size: 12px; }
+  .add-btn { font-size: 13px; color: #1D9E75; border: 0.5px dashed #1D9E75; background: transparent; padding: 7px 14px; border-radius: var(--border-radius-md); cursor: pointer; width: 100%; margin-top: 4px; transition: background 0.15s; }
+  .add-btn:hover { background: #E1F5EE; }
+  .patrones-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.5rem; }
+  .patron-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 14px; border: 0.5px solid var(--color-border-tertiary); }
+  .patron-card .field-label { margin-bottom: 8px; }
+  .tag-input-wrap { display: flex; flex-wrap: wrap; gap: 6px; min-height: 36px; align-items: center; }
+  .tag { background: #E1F5EE; color: #0F6E56; font-size: 12px; padding: 3px 10px; border-radius: 20px; display: flex; align-items: center; gap: 4px; }
+  .tag span { cursor: pointer; font-size: 14px; line-height: 1; color: #0F6E56; }
+  .tag-input { border: none; background: transparent; font-size: 13px; min-width: 80px; color: var(--color-text-primary); outline: none; }
+  .conclusion-row { margin-bottom: 14px; }
+  .conclusion-prompt { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 6px; }
+  .conclusion-prompt em { color: #1D9E75; font-style: normal; }
+  .nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 0.5px solid var(--color-border-tertiary); }
+  .nav-btn { padding: 8px 20px; border-radius: var(--border-radius-md); font-size: 14px; cursor: pointer; transition: all 0.15s; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-primary); }
+  .nav-btn.primary { background: #1D9E75; border-color: #1D9E75; color: #fff; font-weight: 500; }
+  .nav-btn:hover { background: var(--color-background-secondary); }
+  .nav-btn.primary:hover { background: #0F6E56; }
+  .step-indicator { font-size: 13px; color: var(--color-text-tertiary); }
+  .view-section { display: none; }
+  .view-section.active { display: block; }
+  .empty-state { text-align: center; padding: 2rem; color: var(--color-text-tertiary); font-size: 14px; }
+  .summary-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-lg); padding: 1.25rem; margin-bottom: 1rem; }
+  .summary-card h3 { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .summary-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 3px; }
+  .summary-val { font-size: 14px; color: var(--color-text-primary); margin-bottom: 10px; line-height: 1.5; }
+  .badge { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; background: var(--color-background-info); color: var(--color-text-info); padding: 3px 10px; border-radius: 20px; margin-right: 4px; margin-bottom: 4px; }
+  .section-sep { height: 0.5px; background: var(--color-border-tertiary); margin: 1.5rem 0; }
+</style>
+
+<div class="wrap">
+  <h2 class="sr-only">Plantilla de análisis de mercado en redes sociales para fisioterapeutas</h2>
+
+  <div class="header">
+    <h1>Análisis de mercado en redes sociales</h1>
+    <p>Ejercicio de clase 1 · Observa, registra y detecta patrones. Elige 5 cuentas que te gusten y que puedan interesar a tu audiencia.</p>
+  </div>
+
+  <!-- VISTA CUENTAS -->
+  <div id="view-cuentas" class="view-section active">
+    <p class="section-title">Cuentas analizadas</p>
+    <div class="tab-row" id="tab-row">
+      <div class="tab active" onclick="switchTab(0)">Cuenta 1</div>
+      <div class="tab" onclick="switchTab(1)">Cuenta 2</div>
+      <div class="tab" onclick="switchTab(2)">Cuenta 3</div>
+      <div class="tab" onclick="switchTab(3)">Cuenta 4</div>
+      <div class="tab" onclick="switchTab(4)">Cuenta 5</div>
+    </div>
+
+    <div id="panels"></div>
+
+    <div class="nav-row">
+      <span class="step-indicator">Paso 1 de 3</span>
+      <button class="nav-btn primary" onclick="goTo('view-patrones')">Detectar patrones →</button>
+    </div>
+  </div>
+
+  <!-- VISTA PATRONES -->
+  <div id="view-patrones" class="view-section">
+    <p class="section-title">Detección de patrones</p>
+    <p style="font-size:14px; color:var(--color-text-secondary); margin-bottom:1.5rem; line-height:1.6;">Después de revisar las 5 cuentas, anota los patrones que has detectado de forma transversal.</p>
+
+    <div class="patrones-grid">
+      <div class="patron-card">
+        <label class="field-label"><i class="ti ti-layout" aria-hidden="true" style="font-size:15px; vertical-align:-2px; margin-right:5px;"></i>Formatos que más usan</label>
+        <p class="field-hint">Ej: carrusel, reel, stories, texto...</p>
+        <div class="tag-input-wrap" id="tags-formatos" onclick="focusTagInput('formatos')">
+          <input class="tag-input" id="input-formatos" placeholder="Escribe y pulsa Enter" onkeydown="addTag(event,'formatos')">
+        </div>
+      </div>
+      <div class="patron-card">
+        <label class="field-label"><i class="ti ti-message-circle" aria-hidden="true" style="font-size:15px; vertical-align:-2px; margin-right:5px;"></i>Temas que tocan</label>
+        <p class="field-hint">Ej: dolor crónico, bienestar, autoridad clínica...</p>
+        <div class="tag-input-wrap" id="tags-temas" onclick="focusTagInput('temas')">
+          <input class="tag-input" id="input-temas" placeholder="Escribe y pulsa Enter" onkeydown="addTag(event,'temas')">
+        </div>
+      </div>
+      <div class="patron-card">
+        <label class="field-label"><i class="ti ti-heart" aria-hidden="true" style="font-size:15px; vertical-align:-2px; margin-right:5px;"></i>Emociones que generan</label>
+        <p class="field-hint">Ej: confianza, motivación, curiosidad, urgencia...</p>
+        <div class="tag-input-wrap" id="tags-emociones" onclick="focusTagInput('emociones')">
+          <input class="tag-input" id="input-emociones" placeholder="Escribe y pulsa Enter" onkeydown="addTag(event,'emociones')">
+        </div>
+      </div>
+      <div class="patron-card">
+        <label class="field-label"><i class="ti ti-speakerphone" aria-hidden="true" style="font-size:15px; vertical-align:-2px; margin-right:5px;"></i>Frecuencia de CTAs de venta</label>
+        <p class="field-hint">Ej: cada 3 posts, en stories todos los días...</p>
+        <div class="tag-input-wrap" id="tags-ctas" onclick="focusTagInput('ctas')">
+          <input class="tag-input" id="input-ctas" placeholder="Escribe y pulsa Enter" onkeydown="addTag(event,'ctas')">
+        </div>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Otros patrones que me han llamado la atención</label>
+      <textarea id="otros-patrones" placeholder="Anota cualquier cosa que hayas observado en común..."></textarea>
+    </div>
+
+    <div class="nav-row">
+      <button class="nav-btn" onclick="goTo('view-cuentas')">← Volver a cuentas</button>
+      <span class="step-indicator">Paso 2 de 3</span>
+      <button class="nav-btn primary" onclick="goTo('view-conclusiones')">Mis conclusiones →</button>
+    </div>
+  </div>
+
+  <!-- VISTA CONCLUSIONES -->
+  <div id="view-conclusiones" class="view-section">
+    <p class="section-title">Mis aprendizajes</p>
+    <p style="font-size:14px; color:var(--color-text-secondary); margin-bottom:1.5rem; line-height:1.6;">Este bloque es tuyo. No analices cuentas ajenas, habla de tu cuenta.</p>
+
+    <div class="conclusion-row">
+      <p class="conclusion-prompt">Quiero que mi cuenta transmita… <em>✦</em></p>
+      <textarea id="c1" placeholder="Escribe con libertad, sin censurarte..." style="min-height:64px;"></textarea>
+    </div>
+    <div class="conclusion-row">
+      <p class="conclusion-prompt">No quiero que mi cuenta parezca… <em>✦</em></p>
+      <textarea id="c2" placeholder="" style="min-height:64px;"></textarea>
+    </div>
+    <div class="conclusion-row">
+      <p class="conclusion-prompt">Me gustaría adaptar de estas cuentas… <em>✦</em></p>
+      <textarea id="c3" placeholder="" style="min-height:64px;"></textarea>
+    </div>
+    <div class="conclusion-row">
+      <p class="conclusion-prompt">No quiero copiar… <em>✦</em></p>
+      <textarea id="c4" placeholder="" style="min-height:64px;"></textarea>
+    </div>
+    <div class="conclusion-row">
+      <p class="conclusion-prompt">He visto que mi audiencia responde a temas como… <em>✦</em></p>
+      <textarea id="c5" placeholder="" style="min-height:64px;"></textarea>
+    </div>
+    <div class="conclusion-row">
+      <p class="conclusion-prompt">He detectado que puedo diferenciarme por… <em>✦</em></p>
+      <textarea id="c6" placeholder="" style="min-height:64px;"></textarea>
+    </div>
+    <div class="conclusion-row">
+      <p class="conclusion-prompt">Mi primera hipótesis de contenido es… <em>✦</em></p>
+      <textarea id="c7" placeholder="" style="min-height:64px;"></textarea>
+    </div>
+    <div class="conclusion-row">
+      <p class="conclusion-prompt">Mi primera hipótesis de tono es… <em>✦</em></p>
+      <textarea id="c8" placeholder="" style="min-height:64px;"></textarea>
+    </div>
+
+    <div class="nav-row">
+      <button class="nav-btn" onclick="goTo('view-patrones')">← Volver a patrones</button>
+      <span class="step-indicator">Paso 3 de 3</span>
+      <button class="nav-btn primary" onclick="copyAll()"><i class="ti ti-copy" aria-hidden="true" style="font-size:15px; vertical-align:-2px; margin-right:5px;"></i>Copiar resumen ↗</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const cuentaFields = [
+  { id: 'nombre', label: 'Nombre de la cuenta', type: 'text', placeholder: '@nombre o URL del perfil', hint: '' },
+  { id: 'bio', label: 'Descripción de la bio', type: 'textarea', placeholder: 'Copia aquí su bio tal cual aparece...', hint: '' },
+  { id: 'destacados', label: 'Destacados en Instagram / contenido fijado', type: 'textarea', placeholder: 'Títulos de los destacados o publicaciones fijadas...', hint: 'Qué decide mostrar siempre visible' },
+  { id: 'producto', label: 'Qué producto o servicio vende', type: 'text', placeholder: 'Ej: curso online de €197, consulta 1:1, membresía...', hint: '' },
+  { id: 'landing', label: 'Landing o embudo que usa (link en bio)', type: 'url', placeholder: 'https://...', hint: 'Pega el enlace de su link en bio si tiene' },
+  { id: 'pub1', label: 'Publicación con mucha interacción · URL', type: 'url', placeholder: 'https://...', hint: '' },
+  { id: 'pub1_porque', label: 'Por qué crees que funcionó', type: 'textarea', placeholder: 'Tema, formato, emoción que genera, hook...', hint: '' },
+  { id: 'pub2', label: 'Otra publicación destacada · URL', type: 'url', placeholder: 'https://...', hint: '' },
+  { id: 'pub2_porque', label: 'Por qué crees que funcionó', type: 'textarea', placeholder: '', hint: '' },
+  { id: 'notas', label: 'Notas libres sobre esta cuenta', type: 'textarea', placeholder: 'Lo que más te ha llamado la atención, lo que no harías tú...', hint: '' },
+];
+
+const state = {
+  cuentas: Array.from({length:5}, () => ({})),
+  tags: { formatos: [], temas: [], emociones: [], ctas: [] }
+};
+
+let currentTab = 0;
+
+function buildPanels() {
+  const container = document.getElementById('panels');
+  container.innerHTML = '';
+  for (let i = 0; i < 5; i++) {
+    const panel = document.createElement('div');
+    panel.className = 'cuenta-panel' + (i === 0 ? ' active' : '');
+    panel.id = 'panel-' + i;
+
+    let html = `<div style="display:flex; align-items:center; gap:8px; margin-bottom:1.25rem; padding:10px 14px; background:var(--color-background-secondary); border-radius:var(--border-radius-md); border:0.5px solid var(--color-border-tertiary);">
+      <i class="ti ti-user-circle" aria-hidden="true" style="font-size:18px; color:#1D9E75;"></i>
+      <span style="font-size:14px; font-weight:500; color:var(--color-text-primary);">Cuenta ${i + 1}</span>
+    </div>`;
+
+    cuentaFields.forEach(f => {
+      const val = state.cuentas[i][f.id] || '';
+      const tag = f.type === 'textarea' ? 'textarea' : 'input';
+      const typeAttr = f.type !== 'textarea' ? `type="${f.type}"` : '';
+      const hintHtml = f.hint ? `<p class="field-hint">${f.hint}</p>` : '';
+      html += `<div class="field-group">
+        <label class="field-label">${f.label}</label>
+        ${hintHtml}
+        <${tag} ${typeAttr} data-cuenta="${i}" data-field="${f.id}" placeholder="${f.placeholder}" oninput="saveField(this)">${tag === 'textarea' ? val : ''}</${tag}>`;
+      if (tag === 'input') {
+        html = html.replace(`></${tag}>`, ` value="${val}"></${tag}>`);
+      }
+      html += `</div>`;
+    });
+
+    panel.innerHTML = html;
+    container.appendChild(panel);
+  }
+}
+
+function saveField(el) {
+  const i = parseInt(el.dataset.cuenta);
+  const f = el.dataset.field;
+  state.cuentas[i][f] = el.value;
+}
+
+function switchTab(idx) {
+  currentTab = idx;
+  document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+  document.querySelectorAll('.cuenta-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+}
+
+function goTo(viewId) {
+  document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+  document.getElementById(viewId).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function focusTagInput(name) {
+  document.getElementById('input-' + name).focus();
+}
+
+function addTag(e, name) {
+  if (e.key !== 'Enter' && e.key !== ',') return;
+  e.preventDefault();
+  const input = document.getElementById('input-' + name);
+  const val = input.value.trim().replace(/,$/, '');
+  if (!val) return;
+  state.tags[name].push(val);
+  renderTags(name);
+  input.value = '';
+}
+
+function renderTags(name) {
+  const wrap = document.getElementById('tags-' + name);
+  const input = document.getElementById('input-' + name);
+  wrap.querySelectorAll('.tag').forEach(t => t.remove());
+  state.tags[name].forEach((tag, idx) => {
+    const el = document.createElement('div');
+    el.className = 'tag';
+    el.innerHTML = `${tag} <span onclick="removeTag('${name}',${idx})">×</span>`;
+    wrap.insertBefore(el, input);
+  });
+}
+
+function removeTag(name, idx) {
+  state.tags[name].splice(idx, 1);
+  renderTags(name);
+}
+
+function copyAll() {
+  let txt = '=== ANÁLISIS DE MERCADO EN RRSS ===\n\n';
+  state.cuentas.forEach((c, i) => {
+    if (!c.nombre) return;
+    txt += `--- CUENTA ${i+1}: ${c.nombre} ---\n`;
+    if (c.bio) txt += `Bio: ${c.bio}\n`;
+    if (c.destacados) txt += `Destacados/fijados: ${c.destacados}\n`;
+    if (c.producto) txt += `Producto/servicio: ${c.producto}\n`;
+    if (c.landing) txt += `Link en bio: ${c.landing}\n`;
+    if (c.pub1) txt += `Pub destacada 1: ${c.pub1}\n`;
+    if (c.pub1_porque) txt += `Por qué funcionó: ${c.pub1_porque}\n`;
+    if (c.pub2) txt += `Pub destacada 2: ${c.pub2}\n`;
+    if (c.pub2_porque) txt += `Por qué funcionó: ${c.pub2_porque}\n`;
+    if (c.notas) txt += `Notas: ${c.notas}\n`;
+    txt += '\n';
+  });
+  txt += '--- PATRONES DETECTADOS ---\n';
+  if (state.tags.formatos.length) txt += `Formatos: ${state.tags.formatos.join(', ')}\n`;
+  if (state.tags.temas.length) txt += `Temas: ${state.tags.temas.join(', ')}\n`;
+  if (state.tags.emociones.length) txt += `Emociones: ${state.tags.emociones.join(', ')}\n`;
+  if (state.tags.ctas.length) txt += `CTAs: ${state.tags.ctas.join(', ')}\n`;
+  const otrosPatrones = document.getElementById('otros-patrones').value;
+  if (otrosPatrones) txt += `Otros: ${otrosPatrones}\n`;
+  txt += '\n--- MIS APRENDIZAJES ---\n';
+  const conclusiones = [
+    ['Quiero que mi cuenta transmita', 'c1'],
+    ['No quiero que mi cuenta parezca', 'c2'],
+    ['Me gustaría adaptar de estas cuentas', 'c3'],
+    ['No quiero copiar', 'c4'],
+    ['He visto que mi audiencia responde a temas como', 'c5'],
+    ['He detectado que puedo diferenciarme por', 'c6'],
+    ['Mi primera hipótesis de contenido es', 'c7'],
+    ['Mi primera hipótesis de tono es', 'c8'],
+  ];
+  conclusiones.forEach(([label, id]) => {
+    const val = document.getElementById(id).value;
+    if (val) txt += `${label}:\n${val}\n\n`;
+  });
+  navigator.clipboard.writeText(txt).then(() => {
+    const btn = event.target.closest('button');
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<i class="ti ti-check" aria-hidden="true" style="font-size:15px; vertical-align:-2px; margin-right:5px;"></i>¡Copiado!';
+    setTimeout(() => btn.innerHTML = orig, 2000);
+  });
+}
+
+buildPanels();
+</script>
