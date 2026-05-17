@@ -4,573 +4,327 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Análisis de mercado en RRSS · AFD</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #f5f4f0;
-    color: #1a1a1a;
-    min-height: 100vh;
-    padding: 2rem 1rem;
-  }
-
-  .container {
-    max-width: 720px;
-    margin: 0 auto;
-  }
-
-  .header {
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid #e0ddd6;
-  }
-
-  .header .eyebrow {
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    color: #1D9E75;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-
-  .header h1 {
-    font-size: 26px;
-    font-weight: 700;
-    color: #111;
-    margin-bottom: 8px;
-    line-height: 1.2;
-  }
-
-  .header p {
-    font-size: 15px;
-    color: #666;
-    line-height: 1.6;
-  }
-
-  .step-bar {
-    display: flex;
-    gap: 0;
-    margin-bottom: 2rem;
-    border-radius: 10px;
-    overflow: hidden;
-    border: 1px solid #e0ddd6;
-  }
-
-  .step-item {
-    flex: 1;
-    padding: 10px 8px;
-    text-align: center;
-    font-size: 13px;
-    font-weight: 500;
-    color: #999;
-    background: #fff;
-    cursor: pointer;
-    transition: all 0.2s;
-    border-right: 1px solid #e0ddd6;
-  }
-
-  .step-item:last-child { border-right: none; }
-
-  .step-item.active {
-    background: #1D9E75;
-    color: #fff;
-  }
-
-  .step-item.done {
-    background: #E1F5EE;
-    color: #0F6E56;
-  }
-
-  .step-num {
-    display: block;
-    font-size: 11px;
-    opacity: 0.7;
-    margin-bottom: 2px;
-  }
-
-  .view { display: none; }
-  .view.active { display: block; }
-
-  .section-label {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #999;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: #e0ddd6;
-  }
-
-  .tab-row {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
-  }
-
-  .tab {
-    padding: 7px 16px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    font-size: 13px;
-    cursor: pointer;
-    background: #fff;
-    color: #666;
-    transition: all 0.15s;
-    font-weight: 500;
-  }
-
-  .tab.active {
-    background: #1D9E75;
-    border-color: #1D9E75;
-    color: #fff;
-  }
-
-  .tab:hover:not(.active) {
-    background: #f0f0f0;
-    border-color: #ccc;
-  }
-
-  .panel { display: none; }
-  .panel.active { display: block; }
-
-  .panel-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: #E1F5EE;
-    border: 1px solid #9FE1CB;
-    border-radius: 10px;
-    padding: 12px 16px;
-    margin-bottom: 1.5rem;
-  }
-
-  .panel-header .icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: #1D9E75;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 16px;
-    font-weight: 700;
-    flex-shrink: 0;
-  }
-
-  .panel-header span {
-    font-size: 15px;
-    font-weight: 600;
-    color: #0F6E56;
-  }
-
-  .field-group { margin-bottom: 1.25rem; }
-
-  .field-label {
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 5px;
-  }
-
-  .field-hint {
-    font-size: 12px;
-    color: #999;
-    margin-bottom: 6px;
-  }
-
-  input[type="text"],
-  input[type="url"],
-  textarea {
-    width: 100%;
-    font-size: 14px;
-    color: #1a1a1a;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-family: inherit;
-    resize: vertical;
-    transition: border-color 0.15s;
-    line-height: 1.5;
-  }
-
-  input[type="text"]:focus,
-  input[type="url"]:focus,
-  textarea:focus {
-    outline: none;
-    border-color: #1D9E75;
-    box-shadow: 0 0 0 3px rgba(29,158,117,0.1);
-  }
-
-  textarea { min-height: 80px; }
-
-  .row-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-
-  @media (max-width: 500px) {
-    .row-2 { grid-template-columns: 1fr; }
-  }
-
-  .patrones-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-    margin-bottom: 1.5rem;
-  }
-
-  @media (max-width: 500px) {
-    .patrones-grid { grid-template-columns: 1fr; }
-  }
-
-  .patron-card {
-    background: #fff;
-    border: 1px solid #e0ddd6;
-    border-radius: 10px;
-    padding: 14px;
-  }
-
-  .tag-wrap {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    min-height: 38px;
-    align-items: center;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 6px 10px;
-    background: #fff;
-    cursor: text;
-    transition: border-color 0.15s;
-  }
-
-  .tag-wrap:focus-within {
-    border-color: #1D9E75;
-    box-shadow: 0 0 0 3px rgba(29,158,117,0.1);
-  }
-
-  .tag {
-    background: #E1F5EE;
-    color: #0F6E56;
-    font-size: 12px;
-    font-weight: 500;
-    padding: 3px 10px;
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-
-  .tag-x {
-    cursor: pointer;
-    font-size: 15px;
-    line-height: 1;
-    color: #0F6E56;
-    opacity: 0.7;
-  }
-
-  .tag-x:hover { opacity: 1; }
-
-  .tag-input {
-    border: none;
-    background: transparent;
-    font-size: 13px;
-    min-width: 100px;
-    color: #1a1a1a;
-    outline: none;
-    font-family: inherit;
-    padding: 2px 0;
-  }
-
-  .conclusion-block {
-    background: #fff;
-    border: 1px solid #e0ddd6;
-    border-radius: 10px;
-    padding: 16px;
-    margin-bottom: 12px;
-  }
-
-  .conclusion-prompt {
-    font-size: 15px;
-    font-weight: 600;
-    color: #111;
-    margin-bottom: 8px;
-  }
-
-  .conclusion-prompt .dot {
-    color: #1D9E75;
-    margin-right: 6px;
-  }
-
-  .nav-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #e0ddd6;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .step-info {
-    font-size: 13px;
-    color: #999;
-  }
-
-  .btn {
-    padding: 10px 22px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s;
-    border: 1px solid #ddd;
-    background: #fff;
-    color: #333;
-    font-family: inherit;
-  }
-
-  .btn:hover { background: #f0f0f0; }
-
-  .btn.primary {
-    background: #1D9E75;
-    border-color: #1D9E75;
-    color: #fff;
-  }
-
-  .btn.primary:hover { background: #0F6E56; }
-
-  .btn.copy {
-    background: #111;
-    border-color: #111;
-    color: #fff;
-    padding: 12px 28px;
-    font-size: 15px;
-  }
-
-  .btn.copy:hover { background: #333; }
-
-  .intro-box {
-    background: #fff;
-    border: 1px solid #e0ddd6;
-    border-radius: 10px;
-    padding: 16px;
-    margin-bottom: 1.5rem;
-    font-size: 14px;
-    color: #555;
-    line-height: 1.6;
-  }
-
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    background: #111;
-    color: #fff;
-    padding: 12px 24px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 500;
-    transition: transform 0.3s ease;
-    z-index: 1000;
-  }
-
-  .toast.show { transform: translateX(-50%) translateY(0); }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f4f0;color:#1a1a1a;min-height:100vh;padding:2rem 1rem}
+.container{max-width:720px;margin:0 auto}
+.login-wrap{min-height:80vh;display:flex;align-items:center;justify-content:center}
+.login-card{background:#fff;border:1px solid #e0ddd6;border-radius:16px;padding:2.5rem 2rem;width:100%;max-width:420px;text-align:center}
+.login-card .logo{font-size:12px;font-weight:700;letter-spacing:.1em;color:#38ada9;text-transform:uppercase;margin-bottom:1.5rem}
+.login-card h1{font-size:22px;font-weight:700;color:#111;margin-bottom:8px;line-height:1.3}
+.login-card p{font-size:14px;color:#888;margin-bottom:2rem;line-height:1.6}
+.login-card input[type="email"]{width:100%;font-size:15px;color:#1a1a1a;background:#fff;border:1px solid #ddd;border-radius:10px;padding:12px 16px;font-family:inherit;margin-bottom:12px;transition:border-color .15s;text-align:center}
+.login-card input[type="email"]:focus{outline:none;border-color:#38ada9;box-shadow:0 0 0 3px rgba(56,173,169,.1)}
+.btn-login{width:100%;padding:13px;background:#38ada9;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
+.btn-login:hover{background:#2a8a86}
+.btn-login:disabled{background:#aaa;cursor:not-allowed}
+.login-error{margin-top:12px;font-size:13px;color:#c0392b;background:#fdf0ee;border-radius:8px;padding:10px 14px;display:none}
+.header{margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid #e0ddd6;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap}
+.header-left .eyebrow{font-size:12px;font-weight:700;letter-spacing:.1em;color:#38ada9;text-transform:uppercase;margin-bottom:6px}
+.header-left h1{font-size:22px;font-weight:700;color:#111;margin-bottom:4px}
+.header-left p{font-size:14px;color:#888;line-height:1.5}
+.user-pill{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #e0ddd6;border-radius:20px;padding:6px 14px 6px 10px;font-size:13px;color:#555;white-space:nowrap;flex-shrink:0}
+.user-pill .dot{width:8px;height:8px;border-radius:50%;background:#38ada9;flex-shrink:0}
+.btn-logout{background:none;border:none;color:#aaa;font-size:12px;cursor:pointer;padding:0;margin-left:6px;font-family:inherit;transition:color .15s}
+.btn-logout:hover{color:#c0392b}
+.autosave-bar{display:flex;align-items:center;gap:8px;font-size:12px;color:#aaa;margin-bottom:1.5rem;height:20px}
+.autosave-bar .saving{color:#f39c12}
+.autosave-bar .saved{color:#38ada9}
+.step-bar{display:flex;margin-bottom:2rem;border-radius:10px;overflow:hidden;border:1px solid #e0ddd6}
+.step-item{flex:1;padding:10px 8px;text-align:center;font-size:13px;font-weight:500;color:#999;background:#fff;cursor:pointer;transition:all .2s;border-right:1px solid #e0ddd6}
+.step-item:last-child{border-right:none}
+.step-item.active{background:#38ada9;color:#fff}
+.step-item.done{background:#e8f7f7;color:#2a8a86}
+.step-num{display:block;font-size:11px;opacity:.7;margin-bottom:2px}
+.view{display:none}
+.view.active{display:block}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#999;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.section-label::after{content:'';flex:1;height:1px;background:#e0ddd6}
+.tab-row{display:flex;gap:6px;margin-bottom:1.5rem;flex-wrap:wrap}
+.tab{padding:7px 16px;border-radius:8px;border:1px solid #ddd;font-size:13px;cursor:pointer;background:#fff;color:#666;transition:all .15s;font-weight:500}
+.tab.active{background:#38ada9;border-color:#38ada9;color:#fff}
+.tab:hover:not(.active){background:#f0f0f0;border-color:#ccc}
+.panel{display:none}
+.panel.active{display:block}
+.panel-header{display:flex;align-items:center;gap:10px;background:#e8f7f7;border:1px solid #7dd0ce;border-radius:10px;padding:12px 16px;margin-bottom:1.5rem}
+.panel-header .icon{width:36px;height:36px;border-radius:50%;background:#38ada9;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:700;flex-shrink:0}
+.panel-header span{font-size:15px;font-weight:600;color:#2a8a86}
+.field-group{margin-bottom:1.25rem}
+.field-label{display:block;font-size:13px;font-weight:600;color:#333;margin-bottom:5px}
+.field-hint{font-size:12px;color:#999;margin-bottom:6px}
+input[type="text"],input[type="url"],textarea{width:100%;font-size:14px;color:#1a1a1a;background:#fff;border:1px solid #ddd;border-radius:8px;padding:10px 14px;font-family:inherit;resize:vertical;transition:border-color .15s;line-height:1.5}
+input[type="text"]:focus,input[type="url"]:focus,textarea:focus{outline:none;border-color:#38ada9;box-shadow:0 0 0 3px rgba(56,173,169,.1)}
+textarea{min-height:80px}
+.patrones-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1.5rem}
+@media(max-width:500px){.patrones-grid{grid-template-columns:1fr}}
+.patron-card{background:#fff;border:1px solid #e0ddd6;border-radius:10px;padding:14px}
+.tag-wrap{display:flex;flex-wrap:wrap;gap:6px;min-height:38px;align-items:center;border:1px solid #ddd;border-radius:8px;padding:6px 10px;background:#fff;cursor:text;transition:border-color .15s}
+.tag-wrap:focus-within{border-color:#38ada9;box-shadow:0 0 0 3px rgba(56,173,169,.1)}
+.tag{background:#e8f7f7;color:#2a8a86;font-size:12px;font-weight:500;padding:3px 10px;border-radius:20px;display:flex;align-items:center;gap:5px}
+.tag-x{cursor:pointer;font-size:15px;line-height:1;color:#2a8a86;opacity:.7}
+.tag-x:hover{opacity:1}
+.tag-input{border:none;background:transparent;font-size:13px;min-width:100px;color:#1a1a1a;outline:none;font-family:inherit;padding:2px 0}
+.conclusion-block{background:#fff;border:1px solid #e0ddd6;border-radius:10px;padding:16px;margin-bottom:12px}
+.conclusion-prompt{font-size:15px;font-weight:600;color:#111;margin-bottom:8px}
+.conclusion-prompt .dot{color:#38ada9;margin-right:6px}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:2rem;padding-top:1.5rem;border-top:1px solid #e0ddd6;flex-wrap:wrap;gap:10px}
+.step-info{font-size:13px;color:#999}
+.btn{padding:10px 22px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;border:1px solid #ddd;background:#fff;color:#333;font-family:inherit}
+.btn:hover{background:#f0f0f0}
+.btn.primary{background:#38ada9;border-color:#38ada9;color:#fff}
+.btn.primary:hover{background:#2a8a86}
+.btn.pdf{background:#111;border-color:#111;color:#fff;padding:12px 28px;font-size:15px}
+.btn.pdf:hover{background:#333}
+.intro-box{background:#fff;border:1px solid #e0ddd6;border-radius:10px;padding:16px;margin-bottom:1.5rem;font-size:14px;color:#555;line-height:1.6}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#111;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:500;transition:transform .3s ease;z-index:1000}
+.toast.show{transform:translateX(-50%) translateY(0)}
+@media print{
+  body{background:#fff;padding:0}
+  .step-bar,.tab-row,.nav-row,.autosave-bar,.btn-logout,.user-pill,#login-screen{display:none!important}
+  .view{display:block!important}
+  .panel{display:block!important}
+  .panel-header,.conclusion-block{break-inside:avoid}
+  input,textarea{border:none;border-bottom:1px solid #ccc;border-radius:0;padding:4px 0;background:transparent}
+  .tag-wrap{border:none;border-bottom:1px solid #ccc;border-radius:0}
+}
 </style>
 </head>
 <body>
 
-<div class="container">
-
-  <div class="header">
-    <p class="eyebrow">Academia de Fisioterapia Digital · Clase 1</p>
-    <h1>Análisis de mercado en redes sociales</h1>
-    <p>Elige 5 cuentas que te gusten y que puedan interesar a tu audiencia. Observa, registra y detecta patrones.</p>
-  </div>
-
-  <div class="step-bar">
-    <div class="step-item active" id="step1" onclick="goTo('view-cuentas')">
-      <span class="step-num">Paso 1</span>
-      Las 5 cuentas
-    </div>
-    <div class="step-item" id="step2" onclick="goTo('view-patrones')">
-      <span class="step-num">Paso 2</span>
-      Patrones
-    </div>
-    <div class="step-item" id="step3" onclick="goTo('view-conclusiones')">
-      <span class="step-num">Paso 3</span>
-      Aprendizajes
-    </div>
-  </div>
-
-  <!-- PASO 1: CUENTAS -->
-  <div class="view active" id="view-cuentas">
-
-    <p class="section-label">Cuentas analizadas</p>
-
-    <div class="tab-row">
-      <div class="tab active" onclick="switchTab(0)">Cuenta 1</div>
-      <div class="tab" onclick="switchTab(1)">Cuenta 2</div>
-      <div class="tab" onclick="switchTab(2)">Cuenta 3</div>
-      <div class="tab" onclick="switchTab(3)">Cuenta 4</div>
-      <div class="tab" onclick="switchTab(4)">Cuenta 5</div>
-    </div>
-
-    <div id="panels-container"></div>
-
-    <div class="nav-row">
-      <span class="step-info">Paso 1 de 3</span>
-      <button class="btn primary" onclick="goTo('view-patrones')">Detectar patrones →</button>
-    </div>
-  </div>
-
-  <!-- PASO 2: PATRONES -->
-  <div class="view" id="view-patrones">
-
-    <p class="section-label">Detección de patrones</p>
-
-    <div class="intro-box">
-      Después de revisar las 5 cuentas, anota los patrones que has detectado de forma transversal. Escribe cada etiqueta y pulsa <strong>Enter</strong> para añadirla.
-    </div>
-
-    <div class="patrones-grid">
-      <div class="patron-card">
-        <label class="field-label">Formatos que más usan</label>
-        <p class="field-hint">Ej: carrusel, reel, stories, directo...</p>
-        <div class="tag-wrap" onclick="document.getElementById('input-formatos').focus()">
-          <input class="tag-input" id="input-formatos" placeholder="Escribe y pulsa Enter" onkeydown="addTag(event,'formatos')">
-        </div>
-        <div id="tags-formatos" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;"></div>
-      </div>
-      <div class="patron-card">
-        <label class="field-label">Temas que tocan</label>
-        <p class="field-hint">Ej: dolor crónico, bienestar, autoridad clínica...</p>
-        <div class="tag-wrap" onclick="document.getElementById('input-temas').focus()">
-          <input class="tag-input" id="input-temas" placeholder="Escribe y pulsa Enter" onkeydown="addTag(event,'temas')">
-        </div>
-        <div id="tags-temas" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;"></div>
-      </div>
-      <div class="patron-card">
-        <label class="field-label">Emociones que generan</label>
-        <p class="field-hint">Ej: confianza, motivación, curiosidad...</p>
-        <div class="tag-wrap" onclick="document.getElementById('input-emociones').focus()">
-          <input class="tag-input" id="input-emociones" placeholder="Escribe y pulsa Enter" onkeydown="addTag(event,'emociones')">
-        </div>
-        <div id="tags-emociones" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;"></div>
-      </div>
-      <div class="patron-card">
-        <label class="field-label">Frecuencia de CTAs de venta</label>
-        <p class="field-hint">Ej: cada 3 posts, en stories diariamente...</p>
-        <div class="tag-wrap" onclick="document.getElementById('input-ctas').focus()">
-          <input class="tag-input" id="input-ctas" placeholder="Escribe y pulsa Enter" onkeydown="addTag(event,'ctas')">
-        </div>
-        <div id="tags-ctas" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;"></div>
+<div id="login-screen" class="login-wrap">
+  <div class="login-card">
+    <div style="margin-bottom:1.5rem;display:flex;align-items:center;justify-content:center;">
+      <div style="background:#38ada9;border-radius:14px;padding:14px 20px;display:inline-flex;align-items:center;justify-content:center;">
+        <img src="logo-afd-blanco.png" alt="Academia de Fisioterapia Digital" style="height:44px;width:auto;display:block;">
       </div>
     </div>
-
-    <div class="field-group">
-      <label class="field-label">Otros patrones que me han llamado la atención</label>
-      <textarea id="otros-patrones" placeholder="Anota cualquier cosa que hayas observado en común entre las cuentas..."></textarea>
-    </div>
-
-    <div class="nav-row">
-      <button class="btn" onclick="goTo('view-cuentas')">← Volver</button>
-      <span class="step-info">Paso 2 de 3</span>
-      <button class="btn primary" onclick="goTo('view-conclusiones')">Mis aprendizajes →</button>
-    </div>
+    <h1>Análisis de mercado en RRSS</h1>
+    <p>Introduce tu correo electrónico para acceder al ejercicio y guardar tu progreso.</p>
+    <input type="email" id="login-email" placeholder="tucorreo@email.com" onkeydown="if(event.key==='Enter') doLogin()">
+    <button class="btn-login" onclick="doLogin()" id="btn-login">Entrar</button>
+    <div class="login-error" id="login-error"></div>
   </div>
-
-  <!-- PASO 3: CONCLUSIONES -->
-  <div class="view" id="view-conclusiones">
-
-    <p class="section-label">Mis aprendizajes</p>
-
-    <div class="intro-box">
-      Este bloque es tuyo. No analices cuentas ajenas, habla de tu futura cuenta. Escribe con libertad.
-    </div>
-
-    <div class="conclusion-block">
-      <p class="conclusion-prompt"><span class="dot">✦</span>Quiero que mi cuenta transmita…</p>
-      <textarea id="c1" placeholder="Escribe con libertad, sin censurarte..."></textarea>
-    </div>
-    <div class="conclusion-block">
-      <p class="conclusion-prompt"><span class="dot">✦</span>No quiero que mi cuenta parezca…</p>
-      <textarea id="c2" placeholder=""></textarea>
-    </div>
-    <div class="conclusion-block">
-      <p class="conclusion-prompt"><span class="dot">✦</span>Me gustaría adaptar de estas cuentas…</p>
-      <textarea id="c3" placeholder=""></textarea>
-    </div>
-    <div class="conclusion-block">
-      <p class="conclusion-prompt"><span class="dot">✦</span>No quiero copiar…</p>
-      <textarea id="c4" placeholder=""></textarea>
-    </div>
-    <div class="conclusion-block">
-      <p class="conclusion-prompt"><span class="dot">✦</span>He visto que mi audiencia responde a temas como…</p>
-      <textarea id="c5" placeholder=""></textarea>
-    </div>
-    <div class="conclusion-block">
-      <p class="conclusion-prompt"><span class="dot">✦</span>He detectado que puedo diferenciarme por…</p>
-      <textarea id="c6" placeholder=""></textarea>
-    </div>
-    <div class="conclusion-block">
-      <p class="conclusion-prompt"><span class="dot">✦</span>Mi primera hipótesis de contenido es…</p>
-      <textarea id="c7" placeholder=""></textarea>
-    </div>
-    <div class="conclusion-block">
-      <p class="conclusion-prompt"><span class="dot">✦</span>Mi primera hipótesis de tono es…</p>
-      <textarea id="c8" placeholder=""></textarea>
-    </div>
-
-    <div class="nav-row">
-      <button class="btn" onclick="goTo('view-patrones')">← Volver</button>
-      <span class="step-info">Paso 3 de 3</span>
-      <button class="btn copy" onclick="copyAll()">📋 Copiar mi resumen completo</button>
-    </div>
-  </div>
-
 </div>
 
-<div class="toast" id="toast">¡Resumen copiado! Pégalo donde quieras enviarlo.</div>
+<div id="app-screen" style="display:none;">
+  <div class="container">
+    <div class="header">
+      <div class="header-left">
+        <p class="eyebrow">Academia de Fisioterapia Digital · Clase 1</p>
+        <h1>Análisis de mercado en RRSS</h1>
+        <p>Observa, registra y detecta patrones en 5 cuentas de tu sector.</p>
+      </div>
+      <div class="user-pill">
+        <div class="dot"></div>
+        <span id="user-name">Alumna</span>
+        <button class="btn-logout" onclick="doLogout()">Salir</button>
+      </div>
+    </div>
+
+    <div class="autosave-bar"><span id="autosave-msg">Tu progreso se guarda automáticamente</span></div>
+
+    <div class="step-bar">
+      <div class="step-item active" id="step1" onclick="goTo('view-cuentas')"><span class="step-num">Paso 1</span>Las 5 cuentas</div>
+      <div class="step-item" id="step2" onclick="goTo('view-patrones')"><span class="step-num">Paso 2</span>Patrones</div>
+      <div class="step-item" id="step3" onclick="goTo('view-conclusiones')"><span class="step-num">Paso 3</span>Aprendizajes</div>
+    </div>
+
+    <div class="view active" id="view-cuentas">
+      <p class="section-label">Cuentas analizadas</p>
+      <div class="tab-row">
+        <div class="tab active" onclick="switchTab(0)">Cuenta 1</div>
+        <div class="tab" onclick="switchTab(1)">Cuenta 2</div>
+        <div class="tab" onclick="switchTab(2)">Cuenta 3</div>
+        <div class="tab" onclick="switchTab(3)">Cuenta 4</div>
+        <div class="tab" onclick="switchTab(4)">Cuenta 5</div>
+      </div>
+      <div id="panels-container"></div>
+      <div class="nav-row">
+        <span class="step-info">Paso 1 de 3</span>
+        <button class="btn primary" onclick="goTo('view-patrones')">Detectar patrones →</button>
+      </div>
+    </div>
+
+    <div class="view" id="view-patrones">
+      <p class="section-label">Detección de patrones</p>
+      <div class="intro-box">Después de revisar las 5 cuentas, anota los patrones que has detectado de forma transversal. Escribe cada etiqueta y pulsa <strong>Enter</strong> para añadirla.</div>
+      <div class="patrones-grid">
+        <div class="patron-card">
+          <label class="field-label">Formatos que más usan</label>
+          <p class="field-hint">Ej: carrusel, reel, stories...</p>
+          <div class="tag-wrap" onclick="document.getElementById('input-formatos').focus()">
+            <input class="tag-input" id="input-formatos" placeholder="Escribe y pulsa Enter" onkeydown="addTag(event,'formatos')">
+          </div>
+          <div id="tags-formatos" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;"></div>
+        </div>
+        <div class="patron-card">
+          <label class="field-label">Temas que tocan</label>
+          <p class="field-hint">Ej: dolor crónico, bienestar...</p>
+          <div class="tag-wrap" onclick="document.getElementById('input-temas').focus()">
+            <input class="tag-input" id="input-temas" placeholder="Escribe y pulsa Enter" onkeydown="addTag(event,'temas')">
+          </div>
+          <div id="tags-temas" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;"></div>
+        </div>
+        <div class="patron-card">
+          <label class="field-label">Emociones que generan</label>
+          <p class="field-hint">Ej: confianza, motivación...</p>
+          <div class="tag-wrap" onclick="document.getElementById('input-emociones').focus()">
+            <input class="tag-input" id="input-emociones" placeholder="Escribe y pulsa Enter" onkeydown="addTag(event,'emociones')">
+          </div>
+          <div id="tags-emociones" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;"></div>
+        </div>
+        <div class="patron-card">
+          <label class="field-label">Frecuencia de CTAs de venta</label>
+          <p class="field-hint">Ej: cada 3 posts, en stories...</p>
+          <div class="tag-wrap" onclick="document.getElementById('input-ctas').focus()">
+            <input class="tag-input" id="input-ctas" placeholder="Escribe y pulsa Enter" onkeydown="addTag(event,'ctas')">
+          </div>
+          <div id="tags-ctas" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;"></div>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Otros patrones que me han llamado la atención</label>
+        <textarea id="otros-patrones" placeholder="Anota cualquier cosa que hayas observado en común..." oninput="scheduleAutosave()"></textarea>
+      </div>
+      <div class="nav-row">
+        <button class="btn" onclick="goTo('view-cuentas')">← Volver</button>
+        <span class="step-info">Paso 2 de 3</span>
+        <button class="btn primary" onclick="goTo('view-conclusiones')">Mis aprendizajes →</button>
+      </div>
+    </div>
+
+    <div class="view" id="view-conclusiones">
+      <p class="section-label">Mis aprendizajes</p>
+      <div class="intro-box">Este bloque es tuyo. No analices cuentas ajenas, habla de tu futura cuenta. Escribe con libertad.</div>
+      <div class="conclusion-block"><p class="conclusion-prompt"><span class="dot">✦</span>Quiero que mi cuenta transmita…</p><textarea id="c1" oninput="scheduleAutosave()"></textarea></div>
+      <div class="conclusion-block"><p class="conclusion-prompt"><span class="dot">✦</span>No quiero que mi cuenta parezca…</p><textarea id="c2" oninput="scheduleAutosave()"></textarea></div>
+      <div class="conclusion-block"><p class="conclusion-prompt"><span class="dot">✦</span>Me gustaría adaptar de estas cuentas…</p><textarea id="c3" oninput="scheduleAutosave()"></textarea></div>
+      <div class="conclusion-block"><p class="conclusion-prompt"><span class="dot">✦</span>No quiero copiar…</p><textarea id="c4" oninput="scheduleAutosave()"></textarea></div>
+      <div class="conclusion-block"><p class="conclusion-prompt"><span class="dot">✦</span>He visto que mi audiencia responde a temas como…</p><textarea id="c5" oninput="scheduleAutosave()"></textarea></div>
+      <div class="conclusion-block"><p class="conclusion-prompt"><span class="dot">✦</span>He detectado que puedo diferenciarme por…</p><textarea id="c6" oninput="scheduleAutosave()"></textarea></div>
+      <div class="conclusion-block"><p class="conclusion-prompt"><span class="dot">✦</span>Mi primera hipótesis de contenido es…</p><textarea id="c7" oninput="scheduleAutosave()"></textarea></div>
+      <div class="conclusion-block"><p class="conclusion-prompt"><span class="dot">✦</span>Mi primera hipótesis de tono es…</p><textarea id="c8" oninput="scheduleAutosave()"></textarea></div>
+      <div class="nav-row">
+        <button class="btn" onclick="goTo('view-patrones')">← Volver</button>
+        <span class="step-info">Paso 3 de 3</span>
+        <button class="btn pdf" onclick="exportPDF()">📄 Guardar como PDF</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script>
+const SUPABASE_URL = 'https://xmtmezkoebowgsbxeenv.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_rrBIvhm28Cgpb13g9daXZQ_yoc8HOHc';
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let alumnoId = null, ejercicioId = null, saveTimer = null;
+
 const campos = [
-  { id: 'nombre', label: 'Nombre o URL de la cuenta', type: 'text', placeholder: '@nombre o enlace al perfil', hint: '' },
-  { id: 'bio', label: 'Descripción de la bio', type: 'textarea', placeholder: 'Copia aquí su bio tal cual aparece...', hint: '' },
-  { id: 'destacados', label: 'Destacados / contenido fijado', type: 'textarea', placeholder: 'Títulos de los destacados o publicaciones fijadas...', hint: 'Qué decide mostrar siempre visible' },
-  { id: 'producto', label: 'Qué producto o servicio vende', type: 'text', placeholder: 'Ej: curso online de €197, consulta 1:1, membresía mensual...', hint: '' },
-  { id: 'landing', label: 'Link en bio / embudo que usa', type: 'url', placeholder: 'https://...', hint: 'Pega el enlace de su link en bio si tiene' },
-  { id: 'pub1', label: 'Publicación con mucha interacción · URL', type: 'url', placeholder: 'https://...', hint: '' },
-  { id: 'pub1_porque', label: 'Por qué crees que funcionó', type: 'textarea', placeholder: 'Tema, formato, emoción que genera, gancho inicial...', hint: '' },
-  { id: 'pub2', label: 'Otra publicación destacada · URL', type: 'url', placeholder: 'https://...', hint: '' },
-  { id: 'pub2_porque', label: 'Por qué crees que funcionó', type: 'textarea', placeholder: '', hint: '' },
-  { id: 'notas', label: 'Notas libres sobre esta cuenta', type: 'textarea', placeholder: 'Lo que más te ha llamado la atención, lo que no harías tú...', hint: '' },
+  { id:'nombre', label:'Nombre o URL de la cuenta', type:'text', placeholder:'@nombre o enlace al perfil', hint:'' },
+  { id:'bio', label:'Descripción de la bio', type:'textarea', placeholder:'Copia aquí su bio tal cual aparece...', hint:'' },
+  { id:'destacados', label:'Destacados / contenido fijado', type:'textarea', placeholder:'Títulos de los destacados o publicaciones fijadas...', hint:'Qué decide mostrar siempre visible' },
+  { id:'producto', label:'Qué producto o servicio vende', type:'text', placeholder:'Ej: curso online de €197, consulta 1:1...', hint:'' },
+  { id:'landing', label:'Link en bio / embudo que usa', type:'url', placeholder:'https://...', hint:'' },
+  { id:'pub1', label:'Publicación con mucha interacción · URL', type:'url', placeholder:'https://...', hint:'' },
+  { id:'pub1_porque', label:'Por qué crees que funcionó', type:'textarea', placeholder:'Tema, formato, emoción que genera, gancho...', hint:'' },
+  { id:'pub2', label:'Otra publicación destacada · URL', type:'url', placeholder:'https://...', hint:'' },
+  { id:'pub2_porque', label:'Por qué crees que funcionó', type:'textarea', placeholder:'', hint:'' },
+  { id:'notas', label:'Notas libres sobre esta cuenta', type:'textarea', placeholder:'Lo que más te ha llamado la atención...', hint:'' },
 ];
 
-const estado = {
-  cuentas: Array.from({length: 5}, () => ({})),
-  tags: { formatos: [], temas: [], emociones: [], ctas: [] }
-};
+const estado = { cuentas: Array.from({length:5}, () => ({})), tags: {formatos:[],temas:[],emociones:[],ctas:[]} };
 
-let tabActual = 0;
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const errorEl = document.getElementById('login-error');
+  const btn = document.getElementById('btn-login');
+  errorEl.style.display = 'none';
+  if (!email) return;
+  btn.disabled = true; btn.textContent = 'Comprobando...';
+  const { data, error } = await db.from('alumnos').select('id,nombre,activo').eq('email', email).single();
+  if (error || !data) {
+    errorEl.textContent = 'Este correo no está en la lista de alumnos. Contacta con Cristina.';
+    errorEl.style.display = 'block'; btn.disabled = false; btn.textContent = 'Entrar'; return;
+  }
+  if (!data.activo) {
+    errorEl.textContent = 'Tu acceso está desactivado. Contacta con Cristina.';
+    errorEl.style.display = 'block'; btn.disabled = false; btn.textContent = 'Entrar'; return;
+  }
+  alumnoId = data.id;
+  document.getElementById('user-name').textContent = data.nombre.split(' ')[0];
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display = 'block';
+  buildPanels();
+  await loadProgress();
+}
+
+function doLogout() {
+  alumnoId = null; ejercicioId = null;
+  document.getElementById('login-email').value = '';
+  document.getElementById('app-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+async function loadProgress() {
+  const { data } = await db.from('ejercicio_analisis_mercado').select('*').eq('alumno_id', alumnoId).single();
+  if (!data) return;
+  ejercicioId = data.id;
+  if (data.detalle_cuentas) {
+    for (let i = 0; i < 5; i++) { if (data.detalle_cuentas['cuenta_'+i]) estado.cuentas[i] = data.detalle_cuentas['cuenta_'+i]; }
+    buildPanels();
+  }
+  ['formatos','temas','emociones','ctas'].forEach(n => {
+    const col = 'patrones_'+n;
+    if (data[col]) { estado.tags[n] = data[col].split('|').filter(Boolean); renderTags(n); }
+  });
+  if (data.patrones_otros) document.getElementById('otros-patrones').value = data.patrones_otros;
+  const map = {c1:'cuenta_transmita',c2:'cuenta_no_parezca',c3:'adaptar_de_cuentas',c4:'no_copiar',c5:'audiencia_responde',c6:'diferenciacion',c7:'hipotesis_contenido',c8:'hipotesis_tono'};
+  for (const [elId, col] of Object.entries(map)) { if (data[col]) document.getElementById(elId).value = data[col]; }
+  setAutosaveMsg('Progreso recuperado ✓', 'saved');
+}
+
+function scheduleAutosave() {
+  clearTimeout(saveTimer);
+  setAutosaveMsg('Guardando...', 'saving');
+  saveTimer = setTimeout(saveProgress, 1500);
+}
+
+async function saveProgress() {
+  if (!alumnoId) return;
+  const dc = {};
+  for (let i = 0; i < 5; i++) dc['cuenta_'+i] = estado.cuentas[i];
+  const rellenos = Object.values(estado.cuentas).reduce((a,c) => a + Object.values(c).filter(v => v && v.trim()).length, 0);
+  const pct = Math.round((rellenos / (5 * campos.length)) * 100);
+  const payload = {
+    alumno_id: alumnoId, detalle_cuentas: dc,
+    patrones_formatos: estado.tags.formatos.join('|'), patrones_temas: estado.tags.temas.join('|'),
+    patrones_emociones: estado.tags.emociones.join('|'), patrones_ctas: estado.tags.ctas.join('|'),
+    patrones_otros: document.getElementById('otros-patrones').value,
+    cuenta_transmita: document.getElementById('c1').value, cuenta_no_parezca: document.getElementById('c2').value,
+    adaptar_de_cuentas: document.getElementById('c3').value, no_copiar: document.getElementById('c4').value,
+    audiencia_responde: document.getElementById('c5').value, diferenciacion: document.getElementById('c6').value,
+    hipotesis_contenido: document.getElementById('c7').value, hipotesis_tono: document.getElementById('c8').value,
+    porcentaje_completado: pct, completado: pct >= 80,
+  };
+  if (ejercicioId) {
+    await db.from('ejercicio_analisis_mercado').update(payload).eq('id', ejercicioId);
+  } else {
+    const { data } = await db.from('ejercicio_analisis_mercado').insert(payload).select().single();
+    if (data) ejercicioId = data.id;
+  }
+  setAutosaveMsg('Guardado ✓', 'saved');
+}
+
+function setAutosaveMsg(msg, type) {
+  const el = document.getElementById('autosave-msg');
+  el.textContent = msg; el.className = type || '';
+}
 
 function buildPanels() {
   const cont = document.getElementById('panels-container');
@@ -579,72 +333,52 @@ function buildPanels() {
     const div = document.createElement('div');
     div.className = 'panel' + (i === 0 ? ' active' : '');
     div.id = 'panel-' + i;
-
-    let html = `<div class="panel-header">
-      <div class="icon">${i + 1}</div>
-      <span>Cuenta ${i + 1}</span>
-    </div>`;
-
+    let html = `<div class="panel-header"><div class="icon">${i+1}</div><span>Cuenta ${i+1}</span></div>`;
     campos.forEach(f => {
       const val = estado.cuentas[i][f.id] || '';
-      const hintHtml = f.hint ? `<p class="field-hint">${f.hint}</p>` : '';
+      const hint = f.hint ? `<p class="field-hint">${f.hint}</p>` : '';
       if (f.type === 'textarea') {
-        html += `<div class="field-group">
-          <label class="field-label">${f.label}</label>
-          ${hintHtml}
-          <textarea data-cuenta="${i}" data-field="${f.id}" placeholder="${f.placeholder}" oninput="saveField(this)">${val}</textarea>
-        </div>`;
+        html += `<div class="field-group"><label class="field-label">${f.label}</label>${hint}<textarea data-cuenta="${i}" data-field="${f.id}" placeholder="${f.placeholder}" oninput="saveField(this)">${val}</textarea></div>`;
       } else {
-        html += `<div class="field-group">
-          <label class="field-label">${f.label}</label>
-          ${hintHtml}
-          <input type="${f.type}" value="${val}" data-cuenta="${i}" data-field="${f.id}" placeholder="${f.placeholder}" oninput="saveField(this)">
-        </div>`;
+        html += `<div class="field-group"><label class="field-label">${f.label}</label>${hint}<input type="${f.type}" value="${val.replace(/"/g,'&quot;')}" data-cuenta="${i}" data-field="${f.id}" placeholder="${f.placeholder}" oninput="saveField(this)"></div>`;
       }
     });
-
     div.innerHTML = html;
     cont.appendChild(div);
   }
 }
 
-function saveField(el) {
-  const i = parseInt(el.dataset.cuenta);
-  estado.cuentas[i][el.dataset.field] = el.value;
-}
+function saveField(el) { estado.cuentas[parseInt(el.dataset.cuenta)][el.dataset.field] = el.value; scheduleAutosave(); }
 
 function switchTab(idx) {
-  tabActual = idx;
-  document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === idx));
-  document.querySelectorAll('.panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', i===idx));
+  document.querySelectorAll('.panel').forEach((p,i) => p.classList.toggle('active', i===idx));
 }
 
 function goTo(viewId) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById(viewId).classList.add('active');
-  const steps = { 'view-cuentas': 0, 'view-patrones': 1, 'view-conclusiones': 2 };
+  const steps = {'view-cuentas':0,'view-patrones':1,'view-conclusiones':2};
   const idx = steps[viewId];
-  document.querySelectorAll('.step-item').forEach((s, i) => {
-    s.classList.remove('active', 'done');
-    if (i === idx) s.classList.add('active');
-    else if (i < idx) s.classList.add('done');
+  document.querySelectorAll('.step-item').forEach((s,i) => {
+    s.classList.remove('active','done');
+    if (i===idx) s.classList.add('active');
+    else if (i<idx) s.classList.add('done');
   });
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function addTag(e, name) {
-  if (e.key !== 'Enter' && e.key !== ',') return;
+  if (e.key!=='Enter' && e.key!==',') return;
   e.preventDefault();
-  const input = document.getElementById('input-' + name);
-  const val = input.value.trim().replace(/,$/, '');
+  const input = document.getElementById('input-'+name);
+  const val = input.value.trim().replace(/,$/,'');
   if (!val) return;
-  estado.tags[name].push(val);
-  renderTags(name);
-  input.value = '';
+  estado.tags[name].push(val); renderTags(name); input.value = ''; scheduleAutosave();
 }
 
 function renderTags(name) {
-  const cont = document.getElementById('tags-' + name);
+  const cont = document.getElementById('tags-'+name);
   cont.innerHTML = '';
   estado.tags[name].forEach((tag, idx) => {
     const el = document.createElement('div');
@@ -654,76 +388,9 @@ function renderTags(name) {
   });
 }
 
-function removeTag(name, idx) {
-  estado.tags[name].splice(idx, 1);
-  renderTags(name);
-}
+function removeTag(name, idx) { estado.tags[name].splice(idx,1); renderTags(name); scheduleAutosave(); }
 
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
-}
-
-function copyAll() {
-  let txt = '=== ANÁLISIS DE MERCADO EN RRSS ===\n\n';
-
-  estado.cuentas.forEach((c, i) => {
-    if (!c.nombre && !c.bio) return;
-    txt += `--- CUENTA ${i + 1}${c.nombre ? ': ' + c.nombre : ''} ---\n`;
-    if (c.bio) txt += `Bio: ${c.bio}\n`;
-    if (c.destacados) txt += `Destacados/fijados: ${c.destacados}\n`;
-    if (c.producto) txt += `Producto/servicio: ${c.producto}\n`;
-    if (c.landing) txt += `Link en bio: ${c.landing}\n`;
-    if (c.pub1) txt += `Publicación 1: ${c.pub1}\n`;
-    if (c.pub1_porque) txt += `Por qué funcionó: ${c.pub1_porque}\n`;
-    if (c.pub2) txt += `Publicación 2: ${c.pub2}\n`;
-    if (c.pub2_porque) txt += `Por qué funcionó: ${c.pub2_porque}\n`;
-    if (c.notas) txt += `Notas: ${c.notas}\n`;
-    txt += '\n';
-  });
-
-  txt += '--- PATRONES DETECTADOS ---\n';
-  if (estado.tags.formatos.length) txt += `Formatos: ${estado.tags.formatos.join(', ')}\n`;
-  if (estado.tags.temas.length) txt += `Temas: ${estado.tags.temas.join(', ')}\n`;
-  if (estado.tags.emociones.length) txt += `Emociones: ${estado.tags.emociones.join(', ')}\n`;
-  if (estado.tags.ctas.length) txt += `CTAs de venta: ${estado.tags.ctas.join(', ')}\n`;
-  const otros = document.getElementById('otros-patrones').value;
-  if (otros) txt += `Otros: ${otros}\n`;
-  txt += '\n';
-
-  txt += '--- MIS APRENDIZAJES ---\n\n';
-  const conclusiones = [
-    ['Quiero que mi cuenta transmita', 'c1'],
-    ['No quiero que mi cuenta parezca', 'c2'],
-    ['Me gustaría adaptar de estas cuentas', 'c3'],
-    ['No quiero copiar', 'c4'],
-    ['He visto que mi audiencia responde a temas como', 'c5'],
-    ['He detectado que puedo diferenciarme por', 'c6'],
-    ['Mi primera hipótesis de contenido es', 'c7'],
-    ['Mi primera hipótesis de tono es', 'c8'],
-  ];
-
-  conclusiones.forEach(([label, id]) => {
-    const val = document.getElementById(id).value;
-    if (val) txt += `${label}:\n${val}\n\n`;
-  });
-
-  navigator.clipboard.writeText(txt).then(() => {
-    showToast('¡Resumen copiado! Pégalo donde quieras enviarlo.');
-  }).catch(() => {
-    const ta = document.createElement('textarea');
-    ta.value = txt;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    showToast('¡Resumen copiado!');
-  });
-}
-
-buildPanels();
+function exportPDF() { saveProgress().then(() => window.print()); }
 </script>
 </body>
 </html>
