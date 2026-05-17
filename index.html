@@ -4,7 +4,113 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Análisis de mercado en RRSS · AFD</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+function descargarMD() {
+  guardar();
+  const nombre = alumnoActual ? alumnoActual.nombre : 'Alumna';
+  const fecha = new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+  const campos_cuenta = [
+    { id: 'bio',         label: 'Bio' },
+    { id: 'destacados',  label: 'Destacados / contenido fijado' },
+    { id: 'producto',    label: 'Qué vende' },
+    { id: 'landing',     label: 'Link en bio' },
+    { id: 'pub1',        label: 'Publicación destacada 1' },
+    { id: 'pub1_porque', label: 'Por qué funcionó' },
+    { id: 'pub2',        label: 'Publicación destacada 2' },
+    { id: 'pub2_porque', label: 'Por qué funcionó' },
+    { id: 'notas',       label: 'Notas' },
+  ];
+  let md = '# Mi Tablero de Juego
+';
+  md += '### Academia de Fisioterapia Digital · Clase 1
+
+';
+  md += '**Alumna:** ' + nombre + '
+';
+  md += '**Fecha:** ' + fecha + '
+
+';
+  md += '---
+
+';
+  md += '## Análisis de cuentas
+
+';
+  for (let i = 0; i < 5; i++) {
+    const c = estado.cuentas[i];
+    if (!c.nombre) continue;
+    md += '### Cuenta ' + (i+1) + ' · ' + c.nombre + '
+
+';
+    campos_cuenta.forEach(f => {
+      const v = c[f.id];
+      if (v) md += '**' + f.label + ':** ' + v + '
+
+';
+    });
+    md += '---
+
+';
+  }
+  md += '## Patrones detectados
+
+';
+  if (estado.tags.formatos.length)   md += '**Formatos:** ' + estado.tags.formatos.join(', ') + '
+
+';
+  if (estado.tags.temas.length)      md += '**Temas:** ' + estado.tags.temas.join(', ') + '
+
+';
+  if (estado.tags.emociones.length)  md += '**Emociones:** ' + estado.tags.emociones.join(', ') + '
+
+';
+  if (estado.tags.ctas.length)       md += '**CTAs:** ' + estado.tags.ctas.join(', ') + '
+
+';
+  const otros = document.getElementById('patrones_otros');
+  if (otros && otros.value) md += '**Otros:** ' + otros.value + '
+
+';
+  md += '---
+
+';
+  md += '## Mis aprendizajes
+
+';
+  const conclusiones = [
+    { id: 'cuenta_transmita',    label: 'Quiero que mi cuenta transmita' },
+    { id: 'cuenta_no_parezca',   label: 'No quiero que mi cuenta parezca' },
+    { id: 'adaptar_de_cuentas',  label: 'Me gustaría adaptar de estas cuentas' },
+    { id: 'no_copiar',           label: 'No quiero copiar' },
+    { id: 'audiencia_responde',  label: 'He visto que mi audiencia responde a' },
+    { id: 'diferenciacion',      label: 'He detectado que puedo diferenciarme por' },
+    { id: 'hipotesis_contenido', label: 'Mi primera hipótesis de contenido' },
+    { id: 'hipotesis_tono',      label: 'Mi primera hipótesis de tono' },
+  ];
+  conclusiones.forEach(function(c) {
+    const el = document.getElementById(c.id);
+    if (el && el.value) md += '**' + c.label + ':**
+' + el.value + '
+
+';
+  });
+  md += '---
+
+';
+  md += '*Generado desde Tablero de Juego · Academia de Fisioterapia Digital*
+';
+  const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'tablero-de-juego-' + nombre.split(' ')[0].toLowerCase() + '-' + new Date().toISOString().slice(0,10) + '.md';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('Descargado. Tu Tablero de Juego está listo.');
+}
+</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f4f0;color:#1a1a1a;min-height:100vh;padding:2rem 1rem}
@@ -206,7 +312,7 @@ textarea{min-height:80px}
       <div class="nav-row">
         <button class="btn" onclick="goTo('view-patrones')">← Volver</button>
         <span class="step-info">Paso 3 de 3</span>
-        <button class="btn pdf" onclick="exportPDF()">📄 Guardar como PDF</button>
+        <button class="btn pdf" onclick="descargarMD()">⬇️ Descargar mi Tablero de Juego</button>
       </div>
     </div>
 
@@ -388,7 +494,7 @@ function renderTags(name) {
 
 function removeTag(name, idx) { estado.tags[name].splice(idx,1); renderTags(name); scheduleAutosave(); }
 
-function exportPDF() { saveProgress().then(() => window.print()); }
+
 </script>
 </body>
 </html>
