@@ -390,9 +390,12 @@ function removeTag(name, idx) { estado.tags[name].splice(idx,1); renderTags(name
 
 
 
+
+
 function descargarMD() {
   saveProgress();
-  const nombre = alumnoActual ? alumnoActual.nombre : 'Alumna';
+  const nombreEl = document.getElementById('user-name');
+  const nombre = nombreEl ? nombreEl.textContent : 'Alumna';
   const fecha = new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
   const camposCuenta = [
     { id: 'bio',         label: 'Bio' },
@@ -405,18 +408,18 @@ function descargarMD() {
     { id: 'pub2_porque', label: 'Por qué funcionó' },
     { id: 'notas',       label: 'Notas' },
   ];
-  let md = '# Mi Tablero de Juego\n';
+  var md = '# Mi Tablero de Juego\n';
   md += '### Academia de Fisioterapia Digital · Clase 1\n\n';
   md += '**Alumna:** ' + nombre + '\n';
   md += '**Fecha:** ' + fecha + '\n\n';
   md += '---\n\n';
   md += '## Análisis de cuentas\n\n';
-  for (let i = 0; i < 5; i++) {
-    const c = estado.cuentas[i];
+  for (var i = 0; i < 5; i++) {
+    var c = estado.cuentas[i];
     if (!c.nombre) continue;
     md += '### Cuenta ' + (i+1) + ' · ' + c.nombre + '\n\n';
     camposCuenta.forEach(function(f) {
-      const v = c[f.id];
+      var v = c[f.id];
       if (v) md += '**' + f.label + ':** ' + v + '\n\n';
     });
     md += '---\n\n';
@@ -450,13 +453,14 @@ function descargarMD() {
   var url = URL.createObjectURL(blob);
   var a = document.createElement('a');
   a.href = url;
-  a.download = 'tablero-de-juego-' + nombre.split(' ')[0].toLowerCase() + '-' + new Date().toISOString().slice(0,10) + '.md';
+  a.download = 'tablero-de-juego-' + nombre.toLowerCase() + '-' + new Date().toISOString().slice(0,10) + '.md';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
   showToast('Descargado. Tu Tablero de Juego está listo.');
 }
+
 </script>
 </body>
 </html>
