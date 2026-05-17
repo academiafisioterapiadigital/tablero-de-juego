@@ -391,7 +391,7 @@ function removeTag(name, idx) { estado.tags[name].splice(idx,1); renderTags(name
 
 
 function descargarMD() {
-  guardar();
+  saveProgress();
   const nombre = alumnoActual ? alumnoActual.nombre : 'Alumna';
   const fecha = new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
   const camposCuenta = [
