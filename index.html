@@ -3,59 +3,97 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Análisis de mercado en RRSS · AFD</title>
+<title>Tablero de Juego · AFD</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f4f0;color:#1a1a1a;min-height:100vh;padding:2rem 1rem}
 .container{max-width:720px;margin:0 auto}
+
+/* LOGIN */
 .login-wrap{min-height:80vh;display:flex;align-items:center;justify-content:center}
 .login-card{background:#fff;border:1px solid #e0ddd6;border-radius:16px;padding:2.5rem 2rem;width:100%;max-width:420px;text-align:center}
-.login-card .logo{font-size:12px;font-weight:700;letter-spacing:.1em;color:#38ada9;text-transform:uppercase;margin-bottom:1.5rem}
-.login-card h1{font-size:22px;font-weight:700;color:#111;margin-bottom:8px;line-height:1.3}
-.login-card p{font-size:14px;color:#888;margin-bottom:2rem;line-height:1.6}
-.login-card input[type="email"]{width:100%;font-size:15px;color:#1a1a1a;background:#fff;border:1px solid #ddd;border-radius:10px;padding:12px 16px;font-family:inherit;margin-bottom:12px;transition:border-color .15s;text-align:center}
-.login-card input[type="email"]:focus{outline:none;border-color:#38ada9;box-shadow:0 0 0 3px rgba(56,173,169,.1)}
-.btn-login{width:100%;padding:13px;background:#38ada9;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
+.login-card h2{font-size:20px;font-weight:700;color:#111;margin-bottom:6px}
+.login-card p{font-size:14px;color:#888;margin-bottom:1.75rem;line-height:1.6}
+.login-card input{width:100%;padding:12px 16px;font-size:15px;border:1px solid #ddd;border-radius:10px;margin-bottom:12px;font-family:inherit;transition:border-color .15s;text-align:center}
+.login-card input:focus{outline:none;border-color:#38ada9;box-shadow:0 0 0 3px rgba(56,173,169,.1)}
+.btn-login{width:100%;padding:12px;background:#38ada9;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
 .btn-login:hover{background:#2a8a86}
-.btn-login:disabled{background:#aaa;cursor:not-allowed}
-.login-error{margin-top:12px;font-size:13px;color:#c0392b;background:#fdf0ee;border-radius:8px;padding:10px 14px;display:none}
-.header{margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid #e0ddd6;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap}
-.header-left .eyebrow{font-size:12px;font-weight:700;letter-spacing:.1em;color:#38ada9;text-transform:uppercase;margin-bottom:6px}
-.header-left h1{font-size:22px;font-weight:700;color:#111;margin-bottom:4px}
-.header-left p{font-size:14px;color:#888;line-height:1.5}
-.user-pill{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #e0ddd6;border-radius:20px;padding:6px 14px 6px 10px;font-size:13px;color:#555;white-space:nowrap;flex-shrink:0}
-.user-pill .dot{width:8px;height:8px;border-radius:50%;background:#38ada9;flex-shrink:0}
-.btn-logout{background:none;border:none;color:#aaa;font-size:12px;cursor:pointer;padding:0;margin-left:6px;font-family:inherit;transition:color .15s}
-.btn-logout:hover{color:#c0392b}
-.autosave-bar{display:flex;align-items:center;gap:8px;font-size:12px;color:#aaa;margin-bottom:1.5rem;height:20px}
-.autosave-bar .saving{color:#f39c12}
-.autosave-bar .saved{color:#38ada9}
-.step-bar{display:flex;margin-bottom:2rem;border-radius:10px;overflow:hidden;border:1px solid #e0ddd6}
-.step-item{flex:1;padding:10px 8px;text-align:center;font-size:13px;font-weight:500;color:#999;background:#fff;cursor:pointer;transition:all .2s;border-right:1px solid #e0ddd6}
+.btn-login:disabled{background:#a8d8d7;cursor:not-allowed}
+.login-error{margin-top:12px;font-size:13px;color:#c0392b;background:#fdf0ef;border-radius:8px;padding:10px;display:none}
+
+/* HEADER */
+.header{margin-bottom:1.5rem;padding-bottom:1.25rem;border-bottom:1px solid #e0ddd6;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.header-text h1{font-size:22px;font-weight:700;color:#111;margin-bottom:4px}
+.header-text p{font-size:14px;color:#888;line-height:1.5}
+.header-user{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.user-badge{font-size:13px;color:#2a8a86;background:#e8f7f7;padding:6px 12px;border-radius:20px;font-weight:500}
+.btn-salir{font-size:13px;color:#999;background:none;border:1px solid #ddd;border-radius:8px;padding:6px 12px;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn-salir:hover{color:#333;border-color:#bbb}
+
+/* STEP BAR */
+.step-bar{display:flex;margin-bottom:1.75rem;border-radius:10px;overflow:hidden;border:1px solid #e0ddd6}
+.step-item{flex:1;padding:10px 4px;text-align:center;font-size:11px;font-weight:500;color:#999;background:#fff;cursor:pointer;transition:all .2s;border-right:1px solid #e0ddd6}
 .step-item:last-child{border-right:none}
 .step-item.active{background:#38ada9;color:#fff}
 .step-item.done{background:#e8f7f7;color:#2a8a86}
-.step-num{display:block;font-size:11px;opacity:.7;margin-bottom:2px}
+.step-num{display:block;font-size:10px;opacity:.7;margin-bottom:2px}
+
+/* PROGRESS */
+.progress-wrap{margin-bottom:1.5rem}
+.progress-label{display:flex;justify-content:space-between;font-size:12px;color:#888;margin-bottom:6px}
+.progress-bar{height:6px;background:#e0ddd6;border-radius:10px;overflow:hidden}
+.progress-fill{height:100%;background:#38ada9;border-radius:10px;transition:width .4s ease}
+
+/* AUTOSAVE */
+.autosave-bar{display:flex;align-items:center;gap:8px;font-size:12px;color:#aaa;margin-bottom:1.25rem;min-height:20px}
+.autosave-bar.guardando{color:#38ada9}
+.autosave-bar.guardado{color:#888}
+.autosave-bar.error{color:#c0392b}
+
+/* VIEWS */
 .view{display:none}
 .view.active{display:block}
+
+/* SECTION LABEL */
 .section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#999;margin-bottom:16px;display:flex;align-items:center;gap:10px}
 .section-label::after{content:'';flex:1;height:1px;background:#e0ddd6}
+
+/* INSTRUCCIONES FASE 0 */
+.instrucciones{background:#fff;border:1px solid #e0ddd6;border-radius:14px;padding:2rem;margin-bottom:1.5rem}
+.instrucciones h2{font-size:18px;font-weight:700;color:#111;margin-bottom:6px}
+.instrucciones .subtitulo{font-size:14px;color:#38ada9;font-weight:600;margin-bottom:1rem}
+.instrucciones p{font-size:14px;color:#555;line-height:1.7;margin-bottom:1rem}
+.criterios-list{list-style:none;margin:1.25rem 0}
+.criterios-list li{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;margin-bottom:8px;background:#f5f4f0;border-radius:10px;font-size:14px;color:#333;line-height:1.5}
+.criterios-list li .num{width:26px;height:26px;border-radius:50%;background:#38ada9;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.criterios-list li strong{display:block;font-weight:600;color:#111;margin-bottom:2px}
+.instrucciones .cierre{font-size:13px;color:#888;font-style:italic;margin-top:1rem;padding-top:1rem;border-top:1px solid #e0ddd6}
+
+/* TABS */
 .tab-row{display:flex;gap:6px;margin-bottom:1.5rem;flex-wrap:wrap}
-.tab{padding:7px 16px;border-radius:8px;border:1px solid #ddd;font-size:13px;cursor:pointer;background:#fff;color:#666;transition:all .15s;font-weight:500}
+.tab{padding:7px 12px;border-radius:8px;border:1px solid #ddd;font-size:12px;cursor:pointer;background:#fff;color:#666;transition:all .15s;font-weight:500;line-height:1.3;text-align:center}
 .tab.active{background:#38ada9;border-color:#38ada9;color:#fff}
 .tab:hover:not(.active){background:#f0f0f0;border-color:#ccc}
 .panel{display:none}
 .panel.active{display:block}
-.panel-header{display:flex;align-items:center;gap:10px;background:#e8f7f7;border:1px solid #7dd0ce;border-radius:10px;padding:12px 16px;margin-bottom:1.5rem}
-.panel-header .icon{width:36px;height:36px;border-radius:50%;background:#38ada9;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:700;flex-shrink:0}
-.panel-header span{font-size:15px;font-weight:600;color:#2a8a86}
+
+/* PANEL HEADER */
+.panel-header{display:flex;align-items:center;gap:12px;background:#e8f7f7;border:1px solid #9FE1CB;border-radius:10px;padding:14px 16px;margin-bottom:1.5rem}
+.panel-icon{width:38px;height:38px;border-radius:50%;background:#38ada9;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:700;flex-shrink:0}
+.panel-header-text span{font-size:15px;font-weight:600;color:#2a8a86;display:block}
+.panel-header-text small{font-size:12px;color:#5ab8b4}
+
+/* FIELDS */
 .field-group{margin-bottom:1.25rem}
 .field-label{display:block;font-size:13px;font-weight:600;color:#333;margin-bottom:5px}
-.field-hint{font-size:12px;color:#999;margin-bottom:6px}
+.field-hint{font-size:12px;color:#999;margin-bottom:6px;line-height:1.5}
+.url-note{font-size:11px;color:#bbb;margin-top:4px;font-style:italic}
 input[type="text"],input[type="url"],textarea{width:100%;font-size:14px;color:#1a1a1a;background:#fff;border:1px solid #ddd;border-radius:8px;padding:10px 14px;font-family:inherit;resize:vertical;transition:border-color .15s;line-height:1.5}
 input[type="text"]:focus,input[type="url"]:focus,textarea:focus{outline:none;border-color:#38ada9;box-shadow:0 0 0 3px rgba(56,173,169,.1)}
 textarea{min-height:80px}
+
+/* PATRONES */
 .patrones-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1.5rem}
 @media(max-width:500px){.patrones-grid{grid-template-columns:1fr}}
 .patron-card{background:#fff;border:1px solid #e0ddd6;border-radius:10px;padding:14px}
@@ -65,152 +103,240 @@ textarea{min-height:80px}
 .tag-x{cursor:pointer;font-size:15px;line-height:1;color:#2a8a86;opacity:.7}
 .tag-x:hover{opacity:1}
 .tag-input{border:none;background:transparent;font-size:13px;min-width:100px;color:#1a1a1a;outline:none;font-family:inherit;padding:2px 0}
+
+/* CONCLUSIONES */
 .conclusion-block{background:#fff;border:1px solid #e0ddd6;border-radius:10px;padding:16px;margin-bottom:12px}
-.conclusion-prompt{font-size:15px;font-weight:600;color:#111;margin-bottom:8px}
+.conclusion-prompt{font-size:15px;font-weight:600;color:#111;margin-bottom:4px}
 .conclusion-prompt .dot{color:#38ada9;margin-right:6px}
+.conclusion-hint{font-size:12px;color:#999;margin-bottom:8px;line-height:1.5}
+
+/* NAV */
 .nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:2rem;padding-top:1.5rem;border-top:1px solid #e0ddd6;flex-wrap:wrap;gap:10px}
 .step-info{font-size:13px;color:#999}
 .btn{padding:10px 22px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;border:1px solid #ddd;background:#fff;color:#333;font-family:inherit}
 .btn:hover{background:#f0f0f0}
 .btn.primary{background:#38ada9;border-color:#38ada9;color:#fff}
 .btn.primary:hover{background:#2a8a86}
-.btn.pdf{background:#111;border-color:#111;color:#fff;padding:12px 28px;font-size:15px}
-.btn.pdf:hover{background:#333}
+.btn.dark{background:#111;border-color:#111;color:#fff;padding:12px 28px;font-size:15px}
+.btn.dark:hover{background:#333}
+
+/* INTRO BOX */
 .intro-box{background:#fff;border:1px solid #e0ddd6;border-radius:10px;padding:16px;margin-bottom:1.5rem;font-size:14px;color:#555;line-height:1.6}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#111;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:500;transition:transform .3s ease;z-index:1000}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#111;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:500;transition:transform .3s ease;z-index:1000;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
+
 @media print{
   body{background:#fff;padding:0}
-  .step-bar,.tab-row,.nav-row,.autosave-bar,.btn-logout,.user-pill,#login-screen{display:none!important}
+  .step-bar,.nav-row,.autosave-bar,.header-user,.btn,.tab-row,.toast,#login-screen{display:none!important}
   .view{display:block!important}
   .panel{display:block!important}
-  .panel-header,.conclusion-block{break-inside:avoid}
-  input,textarea{border:none;border-bottom:1px solid #ccc;border-radius:0;padding:4px 0;background:transparent}
-  .tag-wrap{border:none;border-bottom:1px solid #ccc;border-radius:0}
 }
 </style>
 </head>
 <body>
 
+<!-- LOGIN -->
 <div id="login-screen" class="login-wrap">
   <div class="login-card">
     <div style="margin-bottom:1.5rem;display:flex;align-items:center;justify-content:center;">
       <img src="logo-afd-blanco.png" alt="Academia de Fisioterapia Digital" style="height:60px;width:auto;display:block;">
     </div>
-    <h1>Bienvenido a Tablero de Juego</h1>
+    <h2>Bienvenido a Tablero de Juego</h2>
     <p>Introduce tu correo electrónico con el que entras a la formación para acceder al ejercicio y guardar tu progreso.</p>
     <input type="email" id="login-email" placeholder="tucorreo@email.com" onkeydown="if(event.key==='Enter') doLogin()">
-    <button class="btn-login" onclick="doLogin()" id="btn-login">Entrar</button>
+    <button class="btn-login" id="btn-login" onclick="doLogin()">Entrar</button>
     <div class="login-error" id="login-error"></div>
   </div>
 </div>
 
-<div id="app-screen" style="display:none;">
-  <div class="container">
-    <div class="header">
-      <div class="header-left">
-        <p class="eyebrow">Academia de Fisioterapia Digital · Clase 1</p>
-        <h1>Análisis de mercado en RRSS</h1>
-        <p>Observa, registra y detecta patrones en 5 cuentas de tu sector.</p>
-      </div>
-      <div class="user-pill">
-        <div class="dot"></div>
-        <span id="user-name">Alumna</span>
-        <button class="btn-logout" onclick="doLogout()">Salir</button>
-      </div>
+<!-- APP -->
+<div id="app-screen" style="display:none">
+<div class="container">
+
+  <div class="header">
+    <div class="header-text">
+      <h1>Tablero de Juego</h1>
+      <p>Clase 1 · Analiza el mercado, detecta patrones y sitúate en el mapa.</p>
     </div>
-
-    <div class="autosave-bar"><span id="autosave-msg">Tu progreso se guarda automáticamente</span></div>
-
-    <div class="step-bar">
-      <div class="step-item active" id="step1" onclick="goTo('view-cuentas')"><span class="step-num">Paso 1</span>Las 5 cuentas</div>
-      <div class="step-item" id="step2" onclick="goTo('view-patrones')"><span class="step-num">Paso 2</span>Patrones</div>
-      <div class="step-item" id="step3" onclick="goTo('view-conclusiones')"><span class="step-num">Paso 3</span>Aprendizajes</div>
+    <div class="header-user">
+      <span class="user-badge" id="user-name">—</span>
+      <button class="btn-salir" onclick="doLogout()">Salir</button>
     </div>
-
-    <div class="view active" id="view-cuentas">
-      <p class="section-label">Cuentas analizadas</p>
-      <div class="tab-row">
-        <div class="tab active" onclick="switchTab(0)">Cuenta 1</div>
-        <div class="tab" onclick="switchTab(1)">Cuenta 2</div>
-        <div class="tab" onclick="switchTab(2)">Cuenta 3</div>
-        <div class="tab" onclick="switchTab(3)">Cuenta 4</div>
-        <div class="tab" onclick="switchTab(4)">Cuenta 5</div>
-      </div>
-      <div id="panels-container"></div>
-      <div class="nav-row">
-        <span class="step-info">Paso 1 de 3</span>
-        <button class="btn primary" onclick="goTo('view-patrones')">Detectar patrones →</button>
-      </div>
-    </div>
-
-    <div class="view" id="view-patrones">
-      <p class="section-label">Detección de patrones</p>
-      <div class="intro-box">Después de revisar las 5 cuentas, anota los patrones que has detectado de forma transversal. Escribe cada etiqueta y pulsa <strong>Enter</strong> para añadirla.</div>
-      <div class="patrones-grid">
-        <div class="patron-card">
-          <label class="field-label">Formatos que más usan</label>
-          <p class="field-hint">Ej: carrusel, reel, stories...</p>
-          <div class="tag-wrap" onclick="document.getElementById('input-formatos').focus()">
-            <input class="tag-input" id="input-formatos" placeholder="Escribe y pulsa Enter" onkeydown="addTag(event,'formatos')">
-          </div>
-          <div id="tags-formatos" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;"></div>
-        </div>
-        <div class="patron-card">
-          <label class="field-label">Temas que tocan</label>
-          <p class="field-hint">Ej: dolor crónico, bienestar...</p>
-          <div class="tag-wrap" onclick="document.getElementById('input-temas').focus()">
-            <input class="tag-input" id="input-temas" placeholder="Escribe y pulsa Enter" onkeydown="addTag(event,'temas')">
-          </div>
-          <div id="tags-temas" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;"></div>
-        </div>
-        <div class="patron-card">
-          <label class="field-label">Emociones que generan</label>
-          <p class="field-hint">Ej: confianza, motivación...</p>
-          <div class="tag-wrap" onclick="document.getElementById('input-emociones').focus()">
-            <input class="tag-input" id="input-emociones" placeholder="Escribe y pulsa Enter" onkeydown="addTag(event,'emociones')">
-          </div>
-          <div id="tags-emociones" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;"></div>
-        </div>
-        <div class="patron-card">
-          <label class="field-label">Frecuencia de CTAs de venta</label>
-          <p class="field-hint">Ej: cada 3 posts, en stories...</p>
-          <div class="tag-wrap" onclick="document.getElementById('input-ctas').focus()">
-            <input class="tag-input" id="input-ctas" placeholder="Escribe y pulsa Enter" onkeydown="addTag(event,'ctas')">
-          </div>
-          <div id="tags-ctas" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;"></div>
-        </div>
-      </div>
-      <div class="field-group">
-        <label class="field-label">Otros patrones que me han llamado la atención</label>
-        <textarea id="otros-patrones" placeholder="Anota cualquier cosa que hayas observado en común..." oninput="scheduleAutosave()"></textarea>
-      </div>
-      <div class="nav-row">
-        <button class="btn" onclick="goTo('view-cuentas')">← Volver</button>
-        <span class="step-info">Paso 2 de 3</span>
-        <button class="btn primary" onclick="goTo('view-conclusiones')">Mis aprendizajes →</button>
-      </div>
-    </div>
-
-    <div class="view" id="view-conclusiones">
-      <p class="section-label">Mis aprendizajes</p>
-      <div class="intro-box">Este bloque es tuyo. No analices cuentas ajenas, habla de tu futura cuenta. Escribe con libertad.</div>
-      <div class="conclusion-block"><p class="conclusion-prompt"><span class="dot">✦</span>Quiero que mi cuenta transmita…</p><textarea id="c1" oninput="scheduleAutosave()"></textarea></div>
-      <div class="conclusion-block"><p class="conclusion-prompt"><span class="dot">✦</span>No quiero que mi cuenta parezca…</p><textarea id="c2" oninput="scheduleAutosave()"></textarea></div>
-      <div class="conclusion-block"><p class="conclusion-prompt"><span class="dot">✦</span>Me gustaría adaptar de estas cuentas…</p><textarea id="c3" oninput="scheduleAutosave()"></textarea></div>
-      <div class="conclusion-block"><p class="conclusion-prompt"><span class="dot">✦</span>No quiero copiar…</p><textarea id="c4" oninput="scheduleAutosave()"></textarea></div>
-      <div class="conclusion-block"><p class="conclusion-prompt"><span class="dot">✦</span>He visto que mi audiencia responde a temas como…</p><textarea id="c5" oninput="scheduleAutosave()"></textarea></div>
-      <div class="conclusion-block"><p class="conclusion-prompt"><span class="dot">✦</span>He detectado que puedo diferenciarme por…</p><textarea id="c6" oninput="scheduleAutosave()"></textarea></div>
-      <div class="conclusion-block"><p class="conclusion-prompt"><span class="dot">✦</span>Mi primera hipótesis de contenido es…</p><textarea id="c7" oninput="scheduleAutosave()"></textarea></div>
-      <div class="conclusion-block"><p class="conclusion-prompt"><span class="dot">✦</span>Mi primera hipótesis de tono es…</p><textarea id="c8" oninput="scheduleAutosave()"></textarea></div>
-      <div class="nav-row">
-        <button class="btn" onclick="goTo('view-patrones')">← Volver</button>
-        <span class="step-info">Paso 3 de 3</span>
-        <button class="btn pdf" onclick="descargarMD()">⬇️ Descargar mi Tablero de Juego</button>
-      </div>
-    </div>
-
   </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span>Progreso del ejercicio</span>
+      <span id="progress-pct">0%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="step-bar">
+    <div class="step-item active" id="step0" onclick="goTo('view-criterios')"><span class="step-num">Fase 0</span>Criterios</div>
+    <div class="step-item" id="step1" onclick="goTo('view-cuentas')"><span class="step-num">Fase 1</span>5 Cuentas</div>
+    <div class="step-item" id="step2" onclick="goTo('view-patrones')"><span class="step-num">Fase 2</span>Patrones</div>
+    <div class="step-item" id="step3" onclick="goTo('view-posicion')"><span class="step-num">Fase 3</span>Tu posición</div>
+    <div class="step-item" id="step4" onclick="goTo('view-hipotesis')"><span class="step-num">Fase 4</span>Hipótesis</div>
+  </div>
+
+  <div class="autosave-bar" id="autosave-bar">
+    <span id="autosave-text">Los cambios se guardan automáticamente</span>
+  </div>
+
+  <!-- FASE 0 -->
+  <div class="view active" id="view-criterios">
+    <p class="section-label">Antes de empezar</p>
+    <div class="instrucciones">
+      <h2>Cómo elegir tus 5 cuentas</h2>
+      <p class="subtitulo">No busques las más grandes. No busques las más perfectas. Busca las que te retienen.</p>
+      <p>El objetivo de este ejercicio no es admirar cuentas, es aprender a verlas con ojos estratégicos. Para eso necesitas variedad, no volumen de seguidores.</p>
+      <p>Elige una cuenta de cada uno de estos perfiles:</p>
+      <ul class="criterios-list">
+        <li><div class="num">1</div><div><strong>Una cuenta que admires</strong> aunque no sepas explicar por qué. Algo en ella te engancha. Eso ya es información.</div></li>
+        <li><div class="num">2</div><div><strong>Una competencia directa fisio.</strong> Alguien que haga lo mismo que tú o parecido. No para compararos, para entender qué está comunicando.</div></li>
+        <li><div class="num">3</div><div><strong>Una cuenta de otro sector</strong> que le hable bien a personas en proceso de cambio, mejora o cuidado. No tiene que ser fisio. Puede ser psicología, nutrición, entrenamiento, bienestar.</div></li>
+        <li><div class="num">4</div><div><strong>Una cuenta que te genere rechazo o incomodidad.</strong> Y que puedas decir por qué. Esto es tan valioso como las que te gustan.</div></li>
+        <li><div class="num">5</div><div><strong>Una cuenta que creas que le gustaría a tu paciente ideal.</strong> No a ti. A él o a ella.</div></li>
+      </ul>
+      <p class="cierre">Cuando las tengas, pasa al análisis. Recuerda: no eres usuaria, eres estratega.</p>
+    </div>
+    <div class="nav-row">
+      <span class="step-info">Fase 0 de 4</span>
+      <button class="btn primary" onclick="goTo('view-cuentas')">Empezar el análisis →</button>
+    </div>
+  </div>
+
+  <!-- FASE 1 -->
+  <div class="view" id="view-cuentas">
+    <p class="section-label">Análisis de cada cuenta</p>
+    <div class="tab-row">
+      <div class="tab active" onclick="switchTab(0)">1 · Admiras</div>
+      <div class="tab" onclick="switchTab(1)">2 · Competencia</div>
+      <div class="tab" onclick="switchTab(2)">3 · Otro sector</div>
+      <div class="tab" onclick="switchTab(3)">4 · Te incomoda</div>
+      <div class="tab" onclick="switchTab(4)">5 · Tu paciente</div>
+    </div>
+    <div id="panels-container"></div>
+    <div class="nav-row">
+      <button class="btn" onclick="goTo('view-criterios')">← Volver</button>
+      <span class="step-info">Fase 1 de 4</span>
+      <button class="btn primary" onclick="goTo('view-patrones')">Detectar patrones →</button>
+    </div>
+  </div>
+
+  <!-- FASE 2 -->
+  <div class="view" id="view-patrones">
+    <p class="section-label">Patrones transversales</p>
+    <div class="intro-box">Después de revisar las 5 cuentas, anota los patrones que has detectado en común. Escribe cada etiqueta y pulsa <strong>Enter</strong> para añadirla.</div>
+    <div class="patrones-grid">
+      <div class="patron-card">
+        <label class="field-label">Formatos que se repiten</label>
+        <p class="field-hint">Ej: reel, carrusel, stories, directo...</p>
+        <div class="tag-wrap" onclick="document.getElementById('input-formatos').focus()">
+          <input class="tag-input" id="input-formatos" placeholder="Escribe y pulsa Enter" onkeydown="addTag(event,'formatos')">
+        </div>
+        <div id="tags-formatos" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"></div>
+      </div>
+      <div class="patron-card">
+        <label class="field-label">Temas que aparecen una y otra vez</label>
+        <p class="field-hint">Ej: dolor crónico, bienestar, casos de éxito...</p>
+        <div class="tag-wrap" onclick="document.getElementById('input-temas').focus()">
+          <input class="tag-input" id="input-temas" placeholder="Escribe y pulsa Enter" onkeydown="addTag(event,'temas')">
+        </div>
+        <div id="tags-temas" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"></div>
+      </div>
+      <div class="patron-card">
+        <label class="field-label">Emociones que generan en ti</label>
+        <p class="field-hint">Ej: confianza, motivación, rechazo, curiosidad...</p>
+        <div class="tag-wrap" onclick="document.getElementById('input-emociones').focus()">
+          <input class="tag-input" id="input-emociones" placeholder="Escribe y pulsa Enter" onkeydown="addTag(event,'emociones')">
+        </div>
+        <div id="tags-emociones" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"></div>
+      </div>
+      <div class="patron-card">
+        <label class="field-label">¿Dónde ves el hueco?</label>
+        <p class="field-hint">¿Qué dudas aparecen en comentarios? ¿Qué no está haciendo nadie?</p>
+        <div class="tag-wrap" onclick="document.getElementById('input-hueco').focus()">
+          <input class="tag-input" id="input-hueco" placeholder="Escribe y pulsa Enter" onkeydown="addTag(event,'hueco')">
+        </div>
+        <div id="tags-hueco" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"></div>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="btn" onclick="goTo('view-cuentas')">← Volver</button>
+      <span class="step-info">Fase 2 de 4</span>
+      <button class="btn primary" onclick="goTo('view-posicion')">Tu posición →</button>
+    </div>
+  </div>
+
+  <!-- FASE 3 -->
+  <div class="view" id="view-posicion">
+    <p class="section-label">Tu posición en el mapa</p>
+    <div class="intro-box">Ahora que has visto el mercado, sitúate tú dentro de él. No hay respuestas correctas. Escribe lo que notes, aunque no estés segura.</div>
+    <div class="conclusion-block">
+      <p class="conclusion-prompt"><span class="dot">✦</span>¿Qué tipo de cuenta quieres ser?</p>
+      <p class="conclusion-hint">No pienses en formatos todavía. ¿Qué papel quieres ocupar para tu paciente? ¿Referente, acompañante, experta, cercana...?</p>
+      <textarea id="p1" oninput="scheduleAutosave()"></textarea>
+    </div>
+    <div class="conclusion-block">
+      <p class="conclusion-prompt"><span class="dot">✦</span>¿Qué tono te sale natural y has visto validado en alguna de estas cuentas?</p>
+      <p class="conclusion-hint">Ej: cercano y directo, técnico pero accesible, con humor, muy empático...</p>
+      <textarea id="p2" oninput="scheduleAutosave()"></textarea>
+    </div>
+    <div class="conclusion-block">
+      <p class="conclusion-prompt"><span class="dot">✦</span>¿Qué no te ves haciendo aunque funcione en redes?</p>
+      <p class="conclusion-hint">Esto también define tu marca. Lo que no harías nunca es tan importante como lo que sí.</p>
+      <textarea id="p3" oninput="scheduleAutosave()"></textarea>
+    </div>
+    <div class="conclusion-block">
+      <p class="conclusion-prompt"><span class="dot">✦</span>¿A qué tipo de paciente crees que puedes hablarle mejor que estas cuentas?</p>
+      <p class="conclusion-hint">No tienes que saberlo con certeza. ¿A quién sientes que entiendes mejor?</p>
+      <textarea id="p4" oninput="scheduleAutosave()"></textarea>
+    </div>
+    <div class="nav-row">
+      <button class="btn" onclick="goTo('view-patrones')">← Volver</button>
+      <span class="step-info">Fase 3 de 4</span>
+      <button class="btn primary" onclick="goTo('view-hipotesis')">Primera hipótesis →</button>
+    </div>
+  </div>
+
+  <!-- FASE 4 -->
+  <div class="view" id="view-hipotesis">
+    <p class="section-label">Tu primera hipótesis</p>
+    <div class="intro-box">No es una estrategia cerrada. Es tu punto de partida. Escribe lo que intuyes ahora mismo, con la información que tienes.</div>
+    <div class="conclusion-block">
+      <p class="conclusion-prompt"><span class="dot">✦</span>El mensaje central de mi contenido es…</p>
+      <p class="conclusion-hint">¿Qué quieres que piense o sienta tu paciente cada vez que te ve?</p>
+      <textarea id="h1" oninput="scheduleAutosave()"></textarea>
+    </div>
+    <div class="conclusion-block">
+      <p class="conclusion-prompt"><span class="dot">✦</span>El tono de mi marca es…</p>
+      <p class="conclusion-hint">Ej: cercano, directo, empático, técnico accesible, con humor...</p>
+      <textarea id="h2" oninput="scheduleAutosave()"></textarea>
+    </div>
+    <div class="conclusion-block">
+      <p class="conclusion-prompt"><span class="dot">✦</span>El paciente que busco conecta con…</p>
+      <p class="conclusion-hint">¿Qué le preocupa, qué busca, qué le frena?</p>
+      <textarea id="h3" oninput="scheduleAutosave()"></textarea>
+    </div>
+    <div class="conclusion-block">
+      <p class="conclusion-prompt"><span class="dot">✦</span>Una frecuencia realista para mí sería…</p>
+      <p class="conclusion-hint">Sé honesta. Mejor empezar con menos y mantenerlo que prometer mucho y abandonar.</p>
+      <textarea id="h4" oninput="scheduleAutosave()"></textarea>
+    </div>
+    <div class="nav-row">
+      <button class="btn" onclick="goTo('view-posicion')">← Volver</button>
+      <span class="step-info">Fase 4 de 4</span>
+      <button class="btn dark" onclick="descargarMD()">⬇️ Descargar mi Tablero de Juego</button>
+    </div>
+  </div>
+
+</div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -221,124 +347,168 @@ const SUPABASE_KEY = 'sb_publishable_rrBIvhm28Cgpb13g9daXZQ_yoc8HOHc';
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let alumnoId = null, ejercicioId = null, saveTimer = null;
+let alumnoId = null;
+let alumnoNombre = '';
+let ejercicioId = null;
+let saveTimer = null;
+let tabActual = 0;
 
-const campos = [
-  { id:'nombre', label:'Nombre o URL de la cuenta', type:'text', placeholder:'@nombre o enlace al perfil', hint:'' },
-  { id:'bio', label:'Descripción de la bio', type:'textarea', placeholder:'Copia aquí su bio tal cual aparece...', hint:'' },
-  { id:'destacados', label:'Destacados / contenido fijado', type:'textarea', placeholder:'Títulos de los destacados o publicaciones fijadas...', hint:'Qué decide mostrar siempre visible' },
-  { id:'producto', label:'Qué producto o servicio vende', type:'text', placeholder:'Ej: curso online de €197, consulta 1:1...', hint:'' },
-  { id:'landing', label:'Link en bio / embudo que usa', type:'url', placeholder:'https://...', hint:'' },
-  { id:'pub1', label:'Publicación con mucha interacción · URL', type:'url', placeholder:'https://...', hint:'' },
-  { id:'pub1_porque', label:'Por qué crees que funcionó', type:'textarea', placeholder:'Tema, formato, emoción que genera, gancho...', hint:'' },
-  { id:'pub2', label:'Otra publicación destacada · URL', type:'url', placeholder:'https://...', hint:'' },
-  { id:'pub2_porque', label:'Por qué crees que funcionó', type:'textarea', placeholder:'', hint:'' },
-  { id:'notas', label:'Notas libres sobre esta cuenta', type:'textarea', placeholder:'Lo que más te ha llamado la atención...', hint:'' },
+const viewOrder = ['view-criterios','view-cuentas','view-patrones','view-posicion','view-hipotesis'];
+
+const tiposCuenta = [
+  { label: 'Cuenta que admiras',        sub: 'Algo en ella te engancha aunque no sepas por qué' },
+  { label: 'Competencia directa fisio', sub: 'Alguien que haga lo mismo que tú o parecido' },
+  { label: 'Cuenta de otro sector',     sub: 'Que hable a personas en proceso de cambio o cuidado' },
+  { label: 'Cuenta que te incomoda',    sub: 'Y que puedas decir por qué. Eso también es información' },
+  { label: 'Cuenta de tu paciente ideal', sub: 'La que crees que le gustaría a él o a ella, no a ti' },
 ];
 
-const estado = { cuentas: Array.from({length:5}, () => ({})), tags: {formatos:[],temas:[],emociones:[],ctas:[]} };
+const camposCuenta = [
+  { id:'nombre',    label:'Nombre o URL de la cuenta',                                          type:'text',     placeholder:'@nombre o enlace al perfil',                                    hint:'' },
+  { id:'porque',   label:'¿Por qué has elegido esta cuenta?',                                  type:'textarea', placeholder:'La pregunta más importante. ¿Qué te retuvo de ella?',           hint:'' },
+  { id:'audiencia',label:'¿A quién le habla? ¿Con qué persona busca conectar?',                type:'textarea', placeholder:'Describe el perfil de persona al que se dirige su contenido...', hint:'' },
+  { id:'promesa',  label:'¿Qué promete con su contenido?',                                     type:'textarea', placeholder:'No qué vende, qué promete. Ej: puede vender sesiones pero prometer eliminar el dolor...', hint:'' },
+  { id:'formato',  label:'¿Qué formato usa más y por qué crees que le funciona?',              type:'textarea', placeholder:'Reels de humor, carruseles educativos, casos de éxito, directos...', hint:'' },
+  { id:'pub_url',  label:'¿Qué publicación te ha retenido más? Guarda el enlace.',             type:'url',      placeholder:'https://...',                                                   hint:'Recordatorio para ti. La IA no accede a este enlace, pero tú podrás volver a verlo.' },
+  { id:'pub_por',  label:'¿Por qué crees que te retuvo?',                                      type:'textarea', placeholder:'El gancho, el tema, la emoción que generó, el formato...',      hint:'' },
+  { id:'bio',      label:'¿Qué tiene su bio?',                                                 type:'textarea', placeholder:'Copia su bio o describe qué información incluye...',            hint:'' },
+  { id:'link_bio', label:'¿Qué link en bio te dice sobre cómo monetiza o qué quiere conseguir?', type:'url',   placeholder:'https://...',                                                   hint:'Recordatorio para ti. La IA no accede a este enlace.' },
+  { id:'diferente',label:'¿Qué harías tú diferente si fueras esta cuenta?',                    type:'textarea', placeholder:'No lo que harías mejor, sino diferente. ¿Qué cambiarías?',     hint:'' },
+];
 
+const estado = {
+  cuentas: Array.from({length:5}, () => ({})),
+  tags: { formatos:[], temas:[], emociones:[], hueco:[] }
+};
+
+// LOGIN
 async function doLogin() {
   const email = document.getElementById('login-email').value.trim().toLowerCase();
-  const errorEl = document.getElementById('login-error');
-  const btn = document.getElementById('btn-login');
-  errorEl.style.display = 'none';
   if (!email) return;
-  btn.disabled = true; btn.textContent = 'Comprobando...';
-  const { data, error } = await db.from('alumnos').select('id,nombre,activo').eq('email', email).single();
+  const btn = document.getElementById('btn-login');
+  const err = document.getElementById('login-error');
+  btn.disabled = true; btn.textContent = 'Comprobando...'; err.style.display = 'none';
+  const { data, error } = await db.from('alumnos').select('id,nombre,email,activo').eq('email',email).single();
   if (error || !data) {
-    errorEl.textContent = 'Este correo no está en la lista de alumnos. Contacta con Cristina.';
-    errorEl.style.display = 'block'; btn.disabled = false; btn.textContent = 'Entrar'; return;
+    err.textContent = 'Este correo no está autorizado. Contacta con Cristina.';
+    err.style.display = 'block'; btn.disabled = false; btn.textContent = 'Entrar'; return;
   }
   if (!data.activo) {
-    errorEl.textContent = 'Tu acceso está desactivado. Contacta con Cristina.';
-    errorEl.style.display = 'block'; btn.disabled = false; btn.textContent = 'Entrar'; return;
+    err.textContent = 'Tu acceso está desactivado. Contacta con Cristina.';
+    err.style.display = 'block'; btn.disabled = false; btn.textContent = 'Entrar'; return;
   }
   alumnoId = data.id;
+  alumnoNombre = data.nombre;
   document.getElementById('user-name').textContent = data.nombre.split(' ')[0];
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app-screen').style.display = 'block';
   buildPanels();
-  await loadProgress();
+  await cargarProgreso();
 }
 
 function doLogout() {
-  alumnoId = null; ejercicioId = null;
-  document.getElementById('login-email').value = '';
-  document.getElementById('app-screen').style.display = 'none';
+  alumnoId = null; alumnoNombre = ''; ejercicioId = null;
   document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app-screen').style.display = 'none';
+  document.getElementById('login-email').value = '';
 }
 
-async function loadProgress() {
-  const { data } = await db.from('ejercicio_analisis_mercado').select('*').eq('alumno_id', alumnoId).single();
+// CARGAR PROGRESO
+async function cargarProgreso() {
+  const { data } = await db.from('ejercicio_analisis_mercado').select('*').eq('alumno_id',alumnoId).single();
   if (!data) return;
   ejercicioId = data.id;
   if (data.detalle_cuentas) {
-    for (let i = 0; i < 5; i++) { if (data.detalle_cuentas['cuenta_'+i]) estado.cuentas[i] = data.detalle_cuentas['cuenta_'+i]; }
-    buildPanels();
+    for (var i = 0; i < 5; i++) {
+      if (data.detalle_cuentas['cuenta_'+i]) estado.cuentas[i] = data.detalle_cuentas['cuenta_'+i];
+    }
+    rellenarPaneles();
   }
-  ['formatos','temas','emociones','ctas'].forEach(n => {
-    const col = 'patrones_'+n;
-    if (data[col]) { estado.tags[n] = data[col].split('|').filter(Boolean); renderTags(n); }
+  ['formatos','temas','emociones','hueco'].forEach(function(k) {
+    var col = 'patrones_' + k;
+    if (data[col]) { estado.tags[k] = data[col].split('|||').filter(Boolean); renderTags(k); }
   });
-  if (data.patrones_otros) document.getElementById('otros-patrones').value = data.patrones_otros;
-  const map = {c1:'cuenta_transmita',c2:'cuenta_no_parezca',c3:'adaptar_de_cuentas',c4:'no_copiar',c5:'audiencia_responde',c6:'diferenciacion',c7:'hipotesis_contenido',c8:'hipotesis_tono'};
-  for (const [elId, col] of Object.entries(map)) { if (data[col]) document.getElementById(elId).value = data[col]; }
-  setAutosaveMsg('Progreso recuperado ✓', 'saved');
+  var map = {p1:'cuenta_transmita',p2:'cuenta_no_parezca',p3:'adaptar_de_cuentas',p4:'no_copiar',h1:'diferenciacion',h2:'hipotesis_contenido',h3:'hipotesis_tono',h4:'audiencia_responde'};
+  Object.keys(map).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && data[map[id]]) el.value = data[map[id]];
+  });
+  actualizarProgreso();
+  mostrarAutosave('guardado','Progreso recuperado ✓');
 }
 
-function scheduleAutosave() {
-  clearTimeout(saveTimer);
-  setAutosaveMsg('Guardando...', 'saving');
-  saveTimer = setTimeout(saveProgress, 1500);
-}
+// GUARDAR
+function scheduleAutosave() { clearTimeout(saveTimer); mostrarAutosave('guardando','Guardando...'); saveTimer = setTimeout(saveProgress, 1500); }
 
 async function saveProgress() {
   if (!alumnoId) return;
-  const dc = {};
-  for (let i = 0; i < 5; i++) dc['cuenta_'+i] = estado.cuentas[i];
-  const rellenos = Object.values(estado.cuentas).reduce((a,c) => a + Object.values(c).filter(v => v && v.trim()).length, 0);
-  const pct = Math.round((rellenos / (5 * campos.length)) * 100);
-  const payload = {
-    alumno_id: alumnoId, detalle_cuentas: dc,
-    patrones_formatos: estado.tags.formatos.join('|'), patrones_temas: estado.tags.temas.join('|'),
-    patrones_emociones: estado.tags.emociones.join('|'), patrones_ctas: estado.tags.ctas.join('|'),
-    patrones_otros: document.getElementById('otros-patrones').value,
-    cuenta_transmita: document.getElementById('c1').value, cuenta_no_parezca: document.getElementById('c2').value,
-    adaptar_de_cuentas: document.getElementById('c3').value, no_copiar: document.getElementById('c4').value,
-    audiencia_responde: document.getElementById('c5').value, diferenciacion: document.getElementById('c6').value,
-    hipotesis_contenido: document.getElementById('c7').value, hipotesis_tono: document.getElementById('c8').value,
-    porcentaje_completado: pct, completado: pct >= 80,
+  var dc = {};
+  for (var i = 0; i < 5; i++) dc['cuenta_'+i] = estado.cuentas[i];
+  var payload = {
+    alumno_id: alumnoId,
+    detalle_cuentas: dc,
+    patrones_formatos:  estado.tags.formatos.join('|||'),
+    patrones_temas:     estado.tags.temas.join('|||'),
+    patrones_emociones: estado.tags.emociones.join('|||'),
+    patrones_hueco:     estado.tags.hueco.join('|||'),
+    cuenta_transmita:    v('p1'),
+    cuenta_no_parezca:   v('p2'),
+    adaptar_de_cuentas:  v('p3'),
+    no_copiar:           v('p4'),
+    diferenciacion:      v('h1'),
+    hipotesis_contenido: v('h2'),
+    hipotesis_tono:      v('h3'),
+    audiencia_responde:  v('h4'),
+    porcentaje_completado: calcPct(),
+    completado: calcPct() === 100,
   };
+  var res;
   if (ejercicioId) {
-    await db.from('ejercicio_analisis_mercado').update(payload).eq('id', ejercicioId);
+    res = await db.from('ejercicio_analisis_mercado').update(payload).eq('id',ejercicioId);
   } else {
-    const { data } = await db.from('ejercicio_analisis_mercado').insert(payload).select().single();
-    if (data) ejercicioId = data.id;
+    res = await db.from('ejercicio_analisis_mercado').insert(payload).select('id').single();
+    if (res.data) ejercicioId = res.data.id;
   }
-  setAutosaveMsg('Guardado ✓', 'saved');
+  if (res.error) mostrarAutosave('error','Error al guardar. Revisa tu conexión.');
+  else { mostrarAutosave('guardado','Guardado automáticamente ✓'); actualizarProgreso(); }
 }
 
-function setAutosaveMsg(msg, type) {
-  const el = document.getElementById('autosave-msg');
-  el.textContent = msg; el.className = type || '';
+function v(id) { var el = document.getElementById(id); return el ? el.value : ''; }
+
+function calcPct() {
+  var ok = 0, total = 0;
+  for (var i = 0; i < 5; i++) { total++; if (estado.cuentas[i].nombre) ok++; }
+  ['formatos','temas','emociones','hueco'].forEach(function(k){ total++; if(estado.tags[k].length) ok++; });
+  ['p1','p2','p3','p4','h1','h2','h3','h4'].forEach(function(id){ total++; if(v(id)) ok++; });
+  return Math.round((ok/total)*100);
 }
 
+function actualizarProgreso() {
+  var pct = calcPct();
+  document.getElementById('progress-fill').style.width = pct+'%';
+  document.getElementById('progress-pct').textContent = pct+'%';
+}
+
+function mostrarAutosave(est, texto) {
+  document.getElementById('autosave-bar').className = 'autosave-bar ' + est;
+  document.getElementById('autosave-text').textContent = texto;
+}
+
+// PANELES
 function buildPanels() {
-  const cont = document.getElementById('panels-container');
+  var cont = document.getElementById('panels-container');
   cont.innerHTML = '';
-  for (let i = 0; i < 5; i++) {
-    const div = document.createElement('div');
-    div.className = 'panel' + (i === 0 ? ' active' : '');
-    div.id = 'panel-' + i;
-    let html = `<div class="panel-header"><div class="icon">${i+1}</div><span>Cuenta ${i+1}</span></div>`;
-    campos.forEach(f => {
-      const val = estado.cuentas[i][f.id] || '';
-      const hint = f.hint ? `<p class="field-hint">${f.hint}</p>` : '';
+  for (var i = 0; i < 5; i++) {
+    var div = document.createElement('div');
+    div.className = 'panel' + (i===0?' active':'');
+    div.id = 'panel-'+i;
+    var html = '<div class="panel-header"><div class="panel-icon">'+(i+1)+'</div><div class="panel-header-text"><span>'+tiposCuenta[i].label+'</span><small>'+tiposCuenta[i].sub+'</small></div></div>';
+    camposCuenta.forEach(function(f) {
+      var hintHtml = f.hint ? '<p class="field-hint">'+f.hint+'</p>' : '';
       if (f.type === 'textarea') {
-        html += `<div class="field-group"><label class="field-label">${f.label}</label>${hint}<textarea data-cuenta="${i}" data-field="${f.id}" placeholder="${f.placeholder}" oninput="saveField(this)">${val}</textarea></div>`;
+        html += '<div class="field-group"><label class="field-label">'+f.label+'</label>'+hintHtml+'<textarea data-cuenta="'+i+'" data-field="'+f.id+'" placeholder="'+f.placeholder+'" oninput="saveField(this);scheduleAutosave()"></textarea></div>';
       } else {
-        html += `<div class="field-group"><label class="field-label">${f.label}</label>${hint}<input type="${f.type}" value="${val.replace(/"/g,'&quot;')}" data-cuenta="${i}" data-field="${f.id}" placeholder="${f.placeholder}" oninput="saveField(this)"></div>`;
+        html += '<div class="field-group"><label class="field-label">'+f.label+'</label><input type="'+f.type+'" data-cuenta="'+i+'" data-field="'+f.id+'" placeholder="'+f.placeholder+'" oninput="saveField(this);scheduleAutosave()">'+hintHtml+'</div>';
       }
     });
     div.innerHTML = html;
@@ -346,117 +516,146 @@ function buildPanels() {
   }
 }
 
-function saveField(el) { estado.cuentas[parseInt(el.dataset.cuenta)][el.dataset.field] = el.value; scheduleAutosave(); }
+function rellenarPaneles() {
+  document.querySelectorAll('[data-cuenta]').forEach(function(el) {
+    var i = parseInt(el.dataset.cuenta);
+    var f = el.dataset.field;
+    if (estado.cuentas[i][f]) el.value = estado.cuentas[i][f];
+  });
+}
+
+function saveField(el) {
+  estado.cuentas[parseInt(el.dataset.cuenta)][el.dataset.field] = el.value;
+  actualizarProgreso();
+}
 
 function switchTab(idx) {
-  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', i===idx));
-  document.querySelectorAll('.panel').forEach((p,i) => p.classList.toggle('active', i===idx));
+  tabActual = idx;
+  document.querySelectorAll('.tab').forEach(function(t,i){ t.classList.toggle('active',i===idx); });
+  document.querySelectorAll('.panel').forEach(function(p,i){ p.classList.toggle('active',i===idx); });
 }
 
 function goTo(viewId) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
   document.getElementById(viewId).classList.add('active');
-  const steps = {'view-cuentas':0,'view-patrones':1,'view-conclusiones':2};
-  const idx = steps[viewId];
-  document.querySelectorAll('.step-item').forEach((s,i) => {
+  var idx = viewOrder.indexOf(viewId);
+  document.querySelectorAll('.step-item').forEach(function(s,i){
     s.classList.remove('active','done');
-    if (i===idx) s.classList.add('active');
-    else if (i<idx) s.classList.add('done');
+    if(i===idx) s.classList.add('active');
+    else if(i<idx) s.classList.add('done');
   });
   window.scrollTo({top:0,behavior:'smooth'});
+  saveProgress();
 }
 
+// TAGS
 function addTag(e, name) {
   if (e.key!=='Enter' && e.key!==',') return;
   e.preventDefault();
-  const input = document.getElementById('input-'+name);
-  const val = input.value.trim().replace(/,$/,'');
+  var input = document.getElementById('input-'+name);
+  var val = input.value.trim().replace(/,$/,'');
   if (!val) return;
-  estado.tags[name].push(val); renderTags(name); input.value = ''; scheduleAutosave();
+  estado.tags[name].push(val);
+  renderTags(name);
+  input.value = '';
+  scheduleAutosave();
+  actualizarProgreso();
 }
 
 function renderTags(name) {
-  const cont = document.getElementById('tags-'+name);
+  var cont = document.getElementById('tags-'+name);
   cont.innerHTML = '';
-  estado.tags[name].forEach((tag, idx) => {
-    const el = document.createElement('div');
+  estado.tags[name].forEach(function(tag, idx) {
+    var el = document.createElement('div');
     el.className = 'tag';
-    el.innerHTML = `${tag} <span class="tag-x" onclick="removeTag('${name}',${idx})">×</span>`;
+    el.innerHTML = tag+' <span class="tag-x" onclick="removeTag(\''+name+'\','+idx+')">×</span>';
     cont.appendChild(el);
   });
 }
 
-function removeTag(name, idx) { estado.tags[name].splice(idx,1); renderTags(name); scheduleAutosave(); }
+function removeTag(name, idx) {
+  estado.tags[name].splice(idx,1);
+  renderTags(name);
+  scheduleAutosave();
+  actualizarProgreso();
+}
 
-
-
-
-
-
-
-
+// DESCARGAR MD
 function descargarMD() {
   saveProgress();
-  const nombreEl = document.getElementById('user-name');
-  const nombre = nombreEl ? nombreEl.textContent : 'Alumna';
-  const fecha = new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
-  const camposCuenta = [
-    { id: 'bio',         label: 'Bio' },
-    { id: 'destacados',  label: 'Destacados / contenido fijado' },
-    { id: 'producto',    label: 'Qué vende' },
-    { id: 'landing',     label: 'Link en bio' },
-    { id: 'pub1',        label: 'Publicación destacada 1' },
-    { id: 'pub1_porque', label: 'Por qué funcionó' },
-    { id: 'pub2',        label: 'Publicación destacada 2' },
-    { id: 'pub2_porque', label: 'Por qué funcionó' },
-    { id: 'notas',       label: 'Notas' },
-  ];
+  var nombre = alumnoNombre || 'Alumna';
+  var fecha = new Date().toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'});
+
   var md = '# Mi Tablero de Juego\n';
   md += '### Academia de Fisioterapia Digital · Clase 1\n\n';
   md += '**Alumna:** ' + nombre + '\n';
   md += '**Fecha:** ' + fecha + '\n\n';
   md += '---\n\n';
-  md += '## Análisis de cuentas\n\n';
+
+  md += '## Contexto\n\n';
+  md += 'Soy fisioterapeuta y estoy construyendo mi presencia en redes sociales desde cero ';
+  md += '(o desde una cuenta parada o desordenada). Acabo de completar mi primer ejercicio de ';
+  md += 'análisis de mercado: he observado 5 cuentas de referencia con criterio estratégico, ';
+  md += 'he detectado patrones y he anotado mis primeras impresiones sobre cómo quiero comunicar.\n\n';
+  md += 'Este documento recoge todo ese trabajo. Úsalo para ayudarme a entender mejor el mercado ';
+  md += 'en el que me muevo y para empezar a intuir cómo podría ser mi presencia en redes, ';
+  md += 'sin presionarme a tener una estrategia cerrada todavía.\n\n';
+  md += '---\n\n';
+
+  md += '## Fase 1 · Análisis de cuentas\n\n';
   for (var i = 0; i < 5; i++) {
     var c = estado.cuentas[i];
     if (!c.nombre) continue;
-    md += '### Cuenta ' + (i+1) + ' · ' + c.nombre + '\n\n';
-    camposCuenta.forEach(function(f) {
-      var v = c[f.id];
-      if (v) md += '**' + f.label + ':** ' + v + '\n\n';
-    });
+    md += '### Cuenta '+(i+1)+' · '+tiposCuenta[i].label+': '+c.nombre+'\n\n';
+    if (c.porque)    md += '**¿Por qué la elegiste?** '+c.porque+'\n\n';
+    if (c.audiencia) md += '**¿A quién le habla?** '+c.audiencia+'\n\n';
+    if (c.promesa)   md += '**¿Qué promete?** '+c.promesa+'\n\n';
+    if (c.formato)   md += '**Formato principal:** '+c.formato+'\n\n';
+    if (c.pub_url)   md += '**Publicación que más retuvo (enlace de referencia):** '+c.pub_url+'\n\n';
+    if (c.pub_por)   md += '**¿Por qué retuvo?** '+c.pub_por+'\n\n';
+    if (c.bio)       md += '**Bio:** '+c.bio+'\n\n';
+    if (c.link_bio)  md += '**Link en bio (enlace de referencia):** '+c.link_bio+'\n\n';
+    if (c.diferente) md += '**¿Qué harías diferente?** '+c.diferente+'\n\n';
     md += '---\n\n';
   }
-  md += '## Patrones detectados\n\n';
-  if (estado.tags.formatos.length)  md += '**Formatos:** ' + estado.tags.formatos.join(', ') + '\n\n';
-  if (estado.tags.temas.length)     md += '**Temas:** ' + estado.tags.temas.join(', ') + '\n\n';
-  if (estado.tags.emociones.length) md += '**Emociones:** ' + estado.tags.emociones.join(', ') + '\n\n';
-  if (estado.tags.ctas.length)      md += '**CTAs:** ' + estado.tags.ctas.join(', ') + '\n\n';
-  var otros = document.getElementById('otros-patrones');
-  if (otros && otros.value) md += '**Otros:** ' + otros.value + '\n\n';
+
+  md += '## Fase 2 · Patrones detectados\n\n';
+  if (estado.tags.formatos.length)  md += '**Formatos que se repiten:** '+estado.tags.formatos.join(', ')+'\n\n';
+  if (estado.tags.temas.length)     md += '**Temas recurrentes:** '+estado.tags.temas.join(', ')+'\n\n';
+  if (estado.tags.emociones.length) md += '**Emociones que generan:** '+estado.tags.emociones.join(', ')+'\n\n';
+  if (estado.tags.hueco.length)     md += '**Hueco detectado:** '+estado.tags.hueco.join(', ')+'\n\n';
   md += '---\n\n';
-  md += '## Mis aprendizajes\n\n';
-  var conclusiones = [
-    { id: 'c1', label: 'Quiero que mi cuenta transmita' },
-    { id: 'c2', label: 'No quiero que mi cuenta parezca' },
-    { id: 'c3', label: 'Me gustaría adaptar de estas cuentas' },
-    { id: 'c4', label: 'No quiero copiar' },
-    { id: 'c5', label: 'He visto que mi audiencia responde a' },
-    { id: 'c6', label: 'He detectado que puedo diferenciarme por' },
-    { id: 'c7', label: 'Mi primera hipótesis de contenido' },
-    { id: 'c8', label: 'Mi primera hipótesis de tono' },
-  ];
-  conclusiones.forEach(function(c) {
-    var el = document.getElementById(c.id);
-    if (el && el.value) md += '**' + c.label + ':**\n' + el.value + '\n\n';
-  });
+
+  md += '## Fase 3 · Mi posición en el mapa\n\n';
+  if (v('p1')) md += '**¿Qué tipo de cuenta quiero ser?**\n'+v('p1')+'\n\n';
+  if (v('p2')) md += '**¿Qué tono me sale natural?**\n'+v('p2')+'\n\n';
+  if (v('p3')) md += '**¿Qué no me veo haciendo?**\n'+v('p3')+'\n\n';
+  if (v('p4')) md += '**¿A qué paciente puedo hablarle mejor?**\n'+v('p4')+'\n\n';
+  md += '---\n\n';
+
+  md += '## Fase 4 · Mi primera hipótesis\n\n';
+  if (v('h1')) md += '**El mensaje central de mi contenido es:**\n'+v('h1')+'\n\n';
+  if (v('h2')) md += '**El tono de mi marca es:**\n'+v('h2')+'\n\n';
+  if (v('h3')) md += '**El paciente que busco conecta con:**\n'+v('h3')+'\n\n';
+  if (v('h4')) md += '**Una frecuencia realista para mí:**\n'+v('h4')+'\n\n';
+  md += '---\n\n';
+
+  md += '## Prompt sugerido para usar con IA\n\n';
+  md += 'Pega este documento completo en Claude o ChatGPT junto con este mensaje:\n\n';
+  md += '> *"He completado mi análisis de mercado en redes sociales como fisioterapeuta. ';
+  md += 'Léelo con atención y ayúdame a identificar: ';
+  md += '1) Qué patrones del mercado son más relevantes para mí, ';
+  md += '2) Qué hueco podría ocupar según lo que he observado, ';
+  md += '3) Qué tipo de contenido podría encajarme mejor como punto de partida. ';
+  md += 'No me des una estrategia cerrada, dame preguntas y reflexiones que me ayuden a pensar con más claridad."*\n\n';
   md += '---\n\n';
   md += '*Generado desde Tablero de Juego · Academia de Fisioterapia Digital*\n';
-  var blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+
+  var blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
   var url = URL.createObjectURL(blob);
   var a = document.createElement('a');
   a.href = url;
-  a.download = 'tablero-de-juego-' + nombre.toLowerCase() + '-' + new Date().toISOString().slice(0,10) + '.md';
+  a.download = 'tablero-de-juego-'+nombre.split(' ')[0].toLowerCase()+'-'+new Date().toISOString().slice(0,10)+'.md';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -464,6 +663,12 @@ function descargarMD() {
   showToast('Descargado. Tu Tablero de Juego está listo.');
 }
 
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3000);
+}
 </script>
 </body>
 </html>
