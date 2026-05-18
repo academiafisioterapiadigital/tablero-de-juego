@@ -98,7 +98,7 @@ textarea{min-height:80px}
       <img src="logo-afd-blanco.png" alt="Academia de Fisioterapia Digital" style="height:60px;width:auto;display:block;">
     </div>
     <h1>Bienvenido a Tablero de Juego</h1>
-    <p>Introduce tu correo electrónico para acceder al ejercicio y guardar tu progreso.</p>
+    <p>Introduce tu correo electrónico con el que entras a la formación para acceder al ejercicio y guardar tu progreso.</p>
     <input type="email" id="login-email" placeholder="tucorreo@email.com" onkeydown="if(event.key==='Enter') doLogin()">
     <button class="btn-login" onclick="doLogin()" id="btn-login">Entrar</button>
     <div class="login-error" id="login-error"></div>
@@ -392,6 +392,9 @@ function removeTag(name, idx) { estado.tags[name].splice(idx,1); renderTags(name
 
 
 
+
+
+
 function descargarMD() {
   saveProgress();
   const nombreEl = document.getElementById('user-name');
@@ -429,19 +432,19 @@ function descargarMD() {
   if (estado.tags.temas.length)     md += '**Temas:** ' + estado.tags.temas.join(', ') + '\n\n';
   if (estado.tags.emociones.length) md += '**Emociones:** ' + estado.tags.emociones.join(', ') + '\n\n';
   if (estado.tags.ctas.length)      md += '**CTAs:** ' + estado.tags.ctas.join(', ') + '\n\n';
-  var otros = document.getElementById('patrones_otros');
+  var otros = document.getElementById('otros-patrones');
   if (otros && otros.value) md += '**Otros:** ' + otros.value + '\n\n';
   md += '---\n\n';
   md += '## Mis aprendizajes\n\n';
   var conclusiones = [
-    { id: 'cuenta_transmita',    label: 'Quiero que mi cuenta transmita' },
-    { id: 'cuenta_no_parezca',   label: 'No quiero que mi cuenta parezca' },
-    { id: 'adaptar_de_cuentas',  label: 'Me gustaría adaptar de estas cuentas' },
-    { id: 'no_copiar',           label: 'No quiero copiar' },
-    { id: 'audiencia_responde',  label: 'He visto que mi audiencia responde a' },
-    { id: 'diferenciacion',      label: 'He detectado que puedo diferenciarme por' },
-    { id: 'hipotesis_contenido', label: 'Mi primera hipótesis de contenido' },
-    { id: 'hipotesis_tono',      label: 'Mi primera hipótesis de tono' },
+    { id: 'c1', label: 'Quiero que mi cuenta transmita' },
+    { id: 'c2', label: 'No quiero que mi cuenta parezca' },
+    { id: 'c3', label: 'Me gustaría adaptar de estas cuentas' },
+    { id: 'c4', label: 'No quiero copiar' },
+    { id: 'c5', label: 'He visto que mi audiencia responde a' },
+    { id: 'c6', label: 'He detectado que puedo diferenciarme por' },
+    { id: 'c7', label: 'Mi primera hipótesis de contenido' },
+    { id: 'c8', label: 'Mi primera hipótesis de tono' },
   ];
   conclusiones.forEach(function(c) {
     var el = document.getElementById(c.id);
